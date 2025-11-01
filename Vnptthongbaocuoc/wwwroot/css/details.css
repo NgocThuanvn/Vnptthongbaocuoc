@@ -1,0 +1,149 @@
+﻿/* Details page (Views/Details/Index.cshtml) */
+.wrap {
+    max-width: 1100px;
+    margin: 24px auto;
+    padding: 0 16px
+}
+
+.head {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px
+}
+
+.title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a
+}
+
+.subtitle {
+    margin: 2px 0 0;
+    color: #64748b;
+    font-size: 13px
+}
+
+.search {
+    display: flex;
+    gap: 8px;
+    align-items: center
+}
+
+.ipt {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    min-width: 340px
+}
+
+.btn {
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 6px;
+    border: 1px solid #0d6efd;
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer
+}
+
+    .btn:hover {
+        background: #0b5ed7;
+        border-color: #0b5ed7
+    }
+
+.btn-ghost {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    cursor: pointer
+}
+
+    .btn-ghost[disabled] {
+        opacity: .6;
+        cursor: not-allowed
+    }
+
+.tbl-wrap {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px
+}
+
+table.sample {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed
+}
+
+.sample th, .sample td {
+    border: 1px solid #dee2e6;
+    padding: .6rem .75rem;
+    font-size: 14px;
+    vertical-align: top;
+    background: #fff
+}
+
+.sample thead th {
+    background: #f8f9fa;
+    font-weight: 700;
+    color: #212529
+}
+
+.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace
+}
+
+.col-idx {
+    width: 48px;
+    text-align: center
+}
+
+.col-tick {
+    width: 58px;
+    text-align: center
+}
+
+.col-file {
+    width: 180px
+}
+
+.col-chuky {
+    width: 150px
+}
+
+.col-tenkh {
+    width: 230px
+}
+
+.col-diachi {
+    word-break: break-word;
+    white-space: pre-wrap
+}
+
+.col-pt {
+    width: 180px
+}
+
+.col-rows {
+    width: 110px
+}
+
+.col-actions {
+    width: 120px;
+    text-align: center
+}
+
+.chk {
+    width: 18px;
+    height: 18px
+}

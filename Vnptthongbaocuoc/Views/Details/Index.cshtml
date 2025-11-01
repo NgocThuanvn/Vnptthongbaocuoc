@@ -1,0 +1,206 @@
+﻿@model Vnptthongbaocuoc.Controllers.DetailsController.DetailsPageModel
+@{
+    ViewData["Title"] = "Chi tiết bảng " + Model.Table;
+}
+
+<style>
+    .page-wrap {
+        max-width: 1280px;
+        margin: 24px auto;
+        padding: 0 20px;
+    }
+
+    .title {
+        font-size: 26px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .breadcrumb-nav {
+        color: #475569;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+        .breadcrumb-nav a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+
+            .breadcrumb-nav a:hover {
+                text-decoration: underline;
+            }
+
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .searchbar {
+        display: flex;
+        gap: 8px;
+    }
+
+        .searchbar input {
+            min-width: 300px;
+        }
+
+    /* ====== TABLE ====== */
+    .table-box {
+        overflow-x: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(15,23,42,.06);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+        font-size: 14px;
+    }
+
+        .table th, .table td {
+            border: 1px solid #dee2e6;
+            padding: 10px 12px;
+            vertical-align: middle;
+        }
+
+        .table th {
+            background: #f8fafc;
+            font-weight: 700;
+            color: #212529;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        .table tbody tr:hover {
+            background: #f1f5ff;
+        }
+
+    .num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    .btn-ghost {
+        padding: 5px 10px;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        background: #fff;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .form-check-input {
+        width: 16px;
+        height: 16px;
+    }
+
+    @@media (max-width: 992px) {
+        .table th, .table td
+
+    {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="toolbar">
+        <div>
+            <div class="breadcrumb-nav">
+                <a asp-controller="Tables" asp-action="Index">Danh sách bảng</a> › Chi tiết
+            </div>
+            <h1 class="title">Bảng: <span class="mono">@Model.Table</span></h1>
+        </div>
+        <form method="get" class="searchbar">
+            <input type="hidden" name="table" value="@Model.Table" />
+            <input class="form-control" type="text" name="q" value="@Model.Query" placeholder="Tìm Tên file / Tên KH / Địa chỉ..." />
+            <button class="btn btn-primary" type="submit">Tìm</button>
+        </form>
+    </div>
+
+    <div class="table-box">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th style="width:45px;">#</th>
+                    <th style="width:110px;text-align:center;">Lệnh</th>
+                    <th style="width:50px;text-align:center;">
+                        <input type="checkbox" class="form-check-input" id="chkAll" onclick="toggleAll(this)" />
+                    </th>
+                    <th>Tên file</th>
+                    <th>Chu kỳ nợ</th>
+                    <th>Tên khách hàng</th>
+                    <th>Địa chỉ khách hàng</th>
+                    <th class="text-end">Tiền PT</th>
+                    <th class="text-end">Số dòng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null && Model.Items.Any())
+                {
+                    var i = 0;
+                    foreach (var it in Model.Items)
+                    {
+                        i++;
+                        <tr>
+                            <td class="center mono">@i</td>
+                            <td class="center">
+                                <!-- ĐỔI THÀNH CHI TIẾT -->
+                                <a class="btn-ghost"
+                                   asp-controller="Print"
+                                   asp-action="File"
+                                   asp-route-table="@Model.Table"
+                                   asp-route-file="@it.TenFile">
+                                    Chi tiết
+                                </a>
+                            </td>
+                            <td class="center">
+                                <input type="checkbox" class="form-check-input row-chk" />
+                            </td>
+                            <td class="mono">@it.TenFile</td>
+                            <td>@(!string.IsNullOrWhiteSpace(it.ChuKyNo) ? it.ChuKyNo : "(trống)")</td>
+                            <td>@it.TenKhachHang</td>
+                            <td>@it.DiaChiKhachHang</td>
+                            <td class="num mono">@Math.Round(it.TongTienPT).ToString("N0")</td>
+                            <td class="num mono">@it.SoLuongDong.ToString("N0")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-3">Không có dữ liệu phù hợp.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleAll(master){
+      const checks = document.querySelectorAll('.row-chk');
+      checks.forEach(c => c.checked = master.checked);
+    }
+</script>

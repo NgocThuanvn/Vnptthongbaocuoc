@@ -1,0 +1,190 @@
+﻿:root {
+    /* Light theme tokens – KHÔNG đổi tên class hay cấu trúc */
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --primary: #0d6efd; /* Xanh VNPT gần gũi */
+    --primary-hover: #0b5ed7;
+    --border: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box
+}
+
+html, body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    font-family: system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px
+}
+
+/* ====== HEADER / NAV – giữ nguyên cấu trúc ====== */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+}
+
+    .topbar .container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-height: 56px
+    }
+
+.brand {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: .2px
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1
+}
+
+.nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+    .nav-link:hover {
+        color: var(--primary);
+        background: #eef2f7
+    }
+
+.spacer {
+    flex: 1
+}
+
+/* ====== BUTTONS – tên class giữ nguyên ====== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 700
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff
+}
+
+    .btn-primary:hover {
+        background: var(--primary-hover)
+    }
+
+.btn-ghost {
+    background: #fff;
+    color: var(--text);
+    border: 1px solid var(--border)
+}
+
+.btn-link {
+    background: none;
+    border: 0;
+    color: var(--text);
+    padding: 0;
+    cursor: pointer
+}
+
+    .btn-link:hover {
+        color: var(--primary)
+    }
+
+/* ====== DROPDOWN – cấu trúc cũ, chỉ đổi màu ====== */
+.dropdown {
+    position: relative
+}
+
+.dropdown-toggle {
+    display: inline-flex;
+    align-items: center
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 180px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08)
+}
+
+.dropdown.open .dropdown-menu {
+    display: block
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text)
+}
+
+    .dropdown-item:hover {
+        background: #f1f5f9
+    }
+
+    .dropdown-item form {
+        margin: 0
+    }
+
+    .dropdown-item button {
+        width: 100%;
+        text-align: left
+    }
+
+/* ====== MAIN & FOOTER ====== */
+.main {
+    padding: 18px 0 32px
+}
+
+.footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 0;
+    color: var(--muted);
+    text-align: center
+}
+
+/* ====== Helpers mặc định (nếu cần mở rộng) ====== */
+a {
+    color: inherit
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 16px 0
+}

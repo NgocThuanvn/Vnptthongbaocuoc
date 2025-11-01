@@ -1,0 +1,178 @@
+﻿@model IEnumerable<Vnptthongbaocuoc.Controllers.TablesController.TableSummary>
+@{
+    ViewData["Title"] = "Các bảng đã import";
+}
+
+<style>
+    .tbl-wrap {
+        max-width: 1100px;
+        margin: 24px auto;
+        padding: 0 16px
+    }
+
+    .tbl-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px
+    }
+
+    .tbl-title {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        color: #0f172a
+    }
+
+    .tbl-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        box-shadow: 0 6px 24px rgba(15,23,42,.06)
+    }
+
+    .tbl-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed
+    }
+
+        .tbl-table th, .tbl-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 14px;
+            vertical-align: middle
+        }
+
+        .tbl-table th {
+            background: #f8fafc;
+            font-weight: 700;
+            color: #334155
+        }
+
+            .tbl-table th.num, .tbl-table td.num {
+                text-align: right;
+                font-variant-numeric: tabular-nums
+            }
+
+    .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        font-size: 12px
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-start
+    }
+
+    .btn-ghost {
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        cursor: pointer
+    }
+
+    .btn-danger {
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #fecaca;
+        background: #fee2e2;
+        color: #991b1b;
+        cursor: pointer
+    }
+
+    .alert {
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin: 12px 0
+    }
+
+    .alert-ok {
+        border: 1px solid #bbf7d0;
+        background: #f0fdf4;
+        color: #166534
+    }
+
+    .alert-err {
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #991b1b
+    }
+
+    td.num span {
+        display: inline-block;
+        min-width: 100px;
+        text-align: right
+    }
+</style>
+
+<div class="tbl-wrap">
+    <div class="tbl-head">
+        <h1 class="tbl-title">Các bảng đã import</h1>
+    </div>
+
+    @if (ViewBag.Success is string ok && !string.IsNullOrWhiteSpace(ok))
+    {
+        <div class="alert alert-ok">@ok</div>
+    }
+    @if (ViewBag.Error is string er && !string.IsNullOrWhiteSpace(er))
+    {
+        <div class="alert alert-err">@er</div>
+    }
+
+    <div class="tbl-card">
+        <table class="tbl-table">
+            <thead>
+                <tr>
+                    <th style="width:220px;">Bảng</th>
+                    <th style="width:140px;">Số lượng tên file</th>
+                    <th style="width:180px;">Chu kỳ nợ</th>
+                    <th class="num" style="width:100px;">Tổng dòng</th>
+                    <th class="num" style="width:150px;">Tổng PT</th>
+                    <th style="width:160px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var it in Model)
+                    {
+                        <tr>
+                            <td class="mono">@it.TableName</td>
+                            <td><span class="badge">@it.TenFileCount</span> bảng kê</td>
+                            <td><span class="badge">@(!string.IsNullOrWhiteSpace(it.ChuKyNo) ? it.ChuKyNo : "(trống)")</span></td>
+                            <td class="num mono"><span>@it.TotalRows.ToString("N0")</span></td>
+                            <td class="num mono"><span>@it.SumTienPt.ToString("N0")</span></td>
+                            <td>
+                                <div class="actions">
+                                    <a class="btn-ghost" href="@Url.Action("Index", "Details", new { table = it.TableName })">Chi tiết</a>
+
+                                    <form asp-action="Delete" asp-controller="Tables" method="post" style="display:inline" onsubmit="return confirm('Xóa vĩnh viễn bảng @it.TableName ?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="table" value="@it.TableName" />
+                                        <button type="submit" class="btn-danger">Xóa</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6" style="text-align:center;color:#64748b;padding:16px">Không có dữ liệu.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

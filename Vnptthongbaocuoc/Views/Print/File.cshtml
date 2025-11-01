@@ -1,0 +1,140 @@
+﻿@model Vnptthongbaocuoc.Controllers.PrintController.PrintPageModel
+@{
+    ViewData["Title"] = "Mẫu in - " + Model.File;
+    var stampUrl = Url.Content("~/image/Mocnentrang.png");
+    var signUrl  = Url.Content("~/image/chuky.png");
+}
+
+<style>
+/* Bố cục trang hiển thị */
+.page { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+.h1 { font-size: 26px; font-weight: 800; color:#0f172a; margin: 0 0 12px 0; }
+.meta { color:#475569; margin-bottom:12px; }
+.toolbar { display:flex; gap:8px; justify-content:flex-end; margin-bottom:12px; }
+.btn { display:inline-block; padding:.5rem .9rem; border-radius:.5rem; border:1px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-weight:600;}
+.btn-primary { background:#2563eb; color:#fff; border-color:#1d4ed8; }
+.btn-link { background:transparent; border:none; color:#2563eb; text-decoration:underline; cursor:pointer; }
+
+.card { background:#fff; border:1px solid #dee2e6; border-radius:10px; box-shadow:0 4px 18px rgba(15,23,42,.06); }
+.tbl { width:100%; border-collapse:collapse; font-size:14px; table-layout:auto; }
+.tbl th, .tbl td { border:1px solid #dee2e6; padding:8px 10px; vertical-align:top; }
+.tbl thead th { background:#f1f5f9; font-weight:700; color:#0f172a; position:sticky; top:0; z-index:2; }
+
+.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+/* Ẩn tem/ ký khi xem màn hình, chỉ hiện khi in */
+.print-stamp, .print-sign { display:none; }
+
+/* Thiết lập in PDF qua trình duyệt */
+@@media print {
+  .no-print { display:none !important; }
+  .page { max-width: none; margin: 0; padding: 0 12mm; }
+  .tbl thead th { background:#e2e8f0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+  /* Khổ giấy và lề */
+  @@page { size: A4 portrait; margin: 12mm; }
+
+  /* Mộc và chữ ký */
+  .print-stamp, .print-sign {
+    display:block;
+    position:fixed;
+    z-index:5;
+    opacity:0.92;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  /* Vị trí tham chiếu theo mẫu bạn gửi:
+     - Mộc đỏ: lệch phải, trên dòng chữ ký ~35mm
+     - Chữ ký: góc phải dưới, ngay vùng người giao */
+  .print-stamp { right: 42mm; bottom: 38mm; width: 38mm; }
+  .print-sign  { right: 25mm; bottom: 28mm; width: 48mm; }
+}
+</style>
+
+<div class="page">
+    <!-- Toolbar -->
+    <div class="toolbar no-print">
+        <div class="toolbar no-print">
+            <a class="btn btn-primary"
+               asp-controller="Pdf" asp-action="FromFile"
+               asp-route-table="@Model.Table" asp-route-file="@Model.File">
+                Lưu PDF
+            </a>
+            <a asp-controller="Details" asp-action="Index" asp-route-table="@Model.Table" class="btn btn">Quay lại danh sách</a>
+        </div>
+
+        <a asp-controller="Details" asp-action="Index" asp-route-table="@Model.Table" class="btn btn">Quay lại danh sách</a>
+    </div>
+
+    <div>
+        <div class="h1">THÔNG BÁO VÀ ĐỀ NGHỊ THANH TOÁN CƯỚC</div>
+        <div class="meta">
+            Bảng: <span class="mono">@Model.Table</span> ·
+            Tên file: <span class="mono">@Model.File</span> ·
+            Chu kỳ nợ: <strong>@(string.IsNullOrWhiteSpace(Model.ChuKyNo) ? "(trống)" : Model.ChuKyNo)</strong> ·
+            Số dòng: <strong>@Model.SoDong.ToString("N0")</strong> ·
+            Tổng PT: <strong class="mono">@Math.Round(Model.TongPT).ToString("N0")</strong>
+        </div>
+        <div class="meta">
+            Kính gửi: <strong>@Model.TenKhachHang</strong><br />
+            Địa chỉ: @Model.DiaChiKhachHang
+        </div>
+    </div>
+
+    <div class="card">
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th style="width:36px;">STT</th>
+                    <th style="width:140px;">MÃ_TT</th>
+                    <th style="width:160px;">SỐ ĐT / ACCOUNT</th>
+                    <th style="width:260px;">TÊN QUÝ KHÁCH</th>
+                    <th>ĐỊA CHỈ</th>
+                    <th class="num" style="width:140px;">TIỀN PT<br/>(Đã bao gồm VAT)</th>
+                    <th style="width:120px;">SỐ HĐ</th>
+                    <th style="width:110px;">NGÀY PHÁT HÀNH</th>
+                    <th style="width:160px;">MÃ TRA CỨU</th>
+                    <th style="width:140px;">GHI CHÚ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Rows != null && Model.Rows.Any())
+                {
+                    var i = 0;
+                    decimal totalPT = 0;
+                    foreach (var r in Model.Rows)
+                    {
+                        i++;
+                        totalPT += r.TIEN_PT;
+                        <tr>
+                            <td class="mono">@i</td>
+                            <td class="mono">@r.MA_TT</td>
+                            <td class="mono">@r.ACCOUNT</td>
+                            <td>@r.TEN_TT</td>
+                            <td>@r.DIACHI_TT</td>
+                            <td class="num mono">@Math.Round(r.TIEN_PT).ToString("N0")</td>
+                            <td class="mono">@r.SOHD</td>
+                            <td class="mono">@r.NGAY_IN</td>
+                            <td class="mono">@r.MA_TRACUUHD</td>
+                            <td></td>
+                        </tr>
+                    }
+                    <tr style="background:#f8fafc;font-weight:700;">
+                        <td colspan="5" class="num">Tổng cộng:</td>
+                        <td class="num mono">@Math.Round(totalPT).ToString("N0")</td>
+                        <td colspan="4"></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr><td colspan="10" class="num" style="text-align:center">Không có dữ liệu.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ảnh mộc & chữ ký: chỉ hiện khi in (PDF) -->
+    <img src="@stampUrl" alt="Mộc công ty" class="print-stamp" />
+    <img src="@signUrl"  alt="Chữ ký"     class="print-sign"  />
+</div>

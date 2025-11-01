@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Vnptthongbaocuoc.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var isSignedIn = SignInManager.IsSignedIn(User);
+    var userEmail = isSignedIn ? User.Identity?.Name : null;
+    var isAdmin = isSignedIn && User.IsInRole("Admin");
+    var title = ViewData["Title"] as string ?? "Vnptthongbaocuoc";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@title - VNPT Thông Báo Cước</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="container">
+            <a class="brand" href="/">VNPT Thông Báo Cước</a>
+
+            <nav class="nav">
+                <a class="nav-link" href="/">Trang chủ</a>
+                <a class="nav-link" href="/Import">Import Excel</a>   @* ✅ Thêm dòng này *@
+
+                <a class="nav-link text-dark" asp-controller="Tables" asp-action="Index">Danh sách bảng</a>
+
+                <div class="spacer"></div>
+
+                @if (!isSignedIn)
+                {
+                    <a class="btn btn-primary" href="/Account/Login">Đăng nhập</a>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <button class="btn btn-ghost dropdown-toggle" type="button">
+                            @userEmail
+                            <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true" focusable="false" style="margin-left:6px">
+                                <path d="M5.25 7.5L10 12.25L14.75 7.5" fill="currentColor" />
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            @if (isAdmin)
+                            {
+                                <a class="dropdown-item" href="/Admin">Quản trị</a>
+                            }
+                            <form class="dropdown-item" asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-link">Đăng xuất</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span>© @DateTime.Now.Year VNPT Thông Báo Cước</span>
+        </div>
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+    <script>
+        document.addEventListener('click', e => {
+            const toggle = e.target.closest('.dropdown-toggle');
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(d => { if (!d.contains(e.target)) d.classList.remove('open'); });
+            if (toggle) toggle.closest('.dropdown').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

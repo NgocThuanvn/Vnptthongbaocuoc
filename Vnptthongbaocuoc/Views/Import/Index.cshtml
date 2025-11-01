@@ -1,0 +1,235 @@
+﻿@{
+    ViewData["Title"] = "Import Excel vào dữ liệu";
+}
+
+<style>
+    .imp-wrap {
+        max-width: 900px;
+        margin: 24px auto;
+        padding: 0 16px
+    }
+
+    .imp-head {
+        margin-bottom: 16px
+    }
+
+    .imp-title {
+        margin: 0 0 6px;
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a
+    }
+
+    .imp-sub {
+        margin: 0;
+        color: #475569;
+        font-size: 14px
+    }
+
+    .imp-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 18px 18px 16px;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, .06)
+    }
+
+    .imp-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: end
+    }
+
+    .imp-field label {
+        display: block;
+        margin: 0 0 6px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600
+    }
+
+    .imp-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        color: #0f172a;
+        outline: none
+    }
+
+        .imp-input:focus {
+            border-color: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.15)
+        }
+
+    .imp-help {
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 6px
+    }
+
+    .imp-actions .btn {
+        height: 40px;
+        padding: 0 18px;
+        border-radius: 10px;
+        border: 0;
+        cursor: pointer;
+        font-weight: 700
+    }
+
+    .imp-btn {
+        background: #0d6efd;
+        color: #fff
+    }
+
+        .imp-btn:hover {
+            background: #0b5ed7
+        }
+
+    .imp-alert {
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin: 14px 0
+    }
+
+    .imp-alert--ok {
+        border: 1px solid #bbf7d0;
+        background: #f0fdf4;
+        color: #166534
+    }
+
+    .imp-alert--err {
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #991b1b
+    }
+
+    .imp-ul {
+        margin: 6px 0 0 18px
+    }
+
+    .imp-note {
+        margin-top: 14px;
+        border-top: 1px dashed #e2e8f0;
+        padding-top: 14px;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.55
+    }
+
+    .imp-cols {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px
+    }
+
+    .imp-tag {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #0f172a;
+        padding: 4px 8px;
+        border-radius: 8px
+    }
+    @@media (max-width: 880px) {
+        .imp-grid
+
+    {
+        grid-template-columns: 1fr;
+        align-items: stretch
+    }
+
+    .imp-actions {
+        display: flex
+    }
+
+        .imp-actions .btn {
+            width: 100%
+        }
+
+    }
+</style>
+
+<div class="imp-wrap">
+    <div class="imp-head">
+        <h1 class="imp-title">Import Excel vào dữ liệu</h1>
+        <p class="imp-sub">
+            Nhập <b>tên bảng gốc</b> (không tiền tố). Hệ thống sẽ tạo bảng dạng <code>Vnpt_<i>ten</i></code>.
+            Nếu trùng tên sẽ báo lỗi. Trang này chỉ dùng cho người đã đăng nhập.
+        </p>
+    </div>
+
+    @if (ViewBag.Errors is IEnumerable<string> errs && errs.Any())
+    {
+        <div class="imp-alert imp-alert--err">
+            <b>Lỗi:</b>
+            <ul class="imp-ul">
+                @foreach (var e in errs)
+                {
+                    <li>@e</li>
+                }
+            </ul>
+        </div>
+    }
+
+    @if (ViewBag.Success is string ok && !string.IsNullOrEmpty(ok))
+    {
+        <div class="imp-alert imp-alert--ok">
+            @ok
+        </div>
+    }
+
+    <div class="imp-card">
+        <form asp-action="Index" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div class="imp-grid">
+                <div class="imp-field">
+                    <label for="baseTableName">Tên bảng (không tiền tố)</label>
+                    <input class="imp-input" type="text" id="baseTableName" name="baseTableName" required placeholder="vd: kh1_oct2025" />
+                    <div class="imp-help">Hệ thống sẽ tạo bảng: <b>Vnpt_kh1_oct2025</b></div>
+                </div>
+
+                <div class="imp-field">
+                    <label for="file">File Excel (.xlsx / .xls)</label>
+                    <input class="imp-input" type="file" id="file" name="file" accept=".xlsx,.xls" required />
+                </div>
+
+                <div class="imp-actions">
+                    <button type="submit" class="btn imp-btn">Import</button>
+                </div>
+            </div>
+
+            <div class="imp-note">
+                <div><b>Cột bắt buộc:</b></div>
+                <div class="imp-cols">
+                    <span class="imp-tag">MA_TT</span>
+                    <span class="imp-tag">ACCOUNT</span>
+                    <span class="imp-tag">TEN_TT</span>
+                    <span class="imp-tag">DIACHI_TT</span>
+                    <span class="imp-tag">TIEN_TTHUE</span>
+                    <span class="imp-tag">THUE</span>
+                    <span class="imp-tag">TIEN_PT</span>
+                    <span class="imp-tag">MA_TRACUUHD</span>
+                    <span class="imp-tag">SOHD</span>
+                    <span class="imp-tag">NGAY_IN</span>
+                    <span class="imp-tag">EMAIL</span>
+                    <span class="imp-tag">TEN_FILE</span>
+                    <span class="imp-tag">CHUKYNO</span>
+                </div>
+
+                <div style="margin-top:10px">
+                    <b>Kiểm tra đồng bộ:</b>
+                    <ul class="imp-ul">
+                        <li>Mỗi <code>TEN_FILE</code> chỉ được có đúng 1 bộ <code>(EMAIL, TEN_TT, DIACHI_TT)</code>.</li>
+                        <li><b>Mỗi <code>TEN_FILE</code> bắt buộc có đúng 1 <code>CHUKYNO</code> và <u>không được để trống</u>.</b> Nếu một <code>TEN_FILE</code> có nhiều <code>CHUKYNO</code> khác nhau, hoặc có dòng bị trống, hệ thống sẽ báo lỗi.</li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
