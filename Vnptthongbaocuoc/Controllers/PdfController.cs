@@ -46,6 +46,8 @@ namespace Vnptthongbaocuoc.Controllers
             public string ACCOUNT { get; set; } = "";
             public string TEN_TT { get; set; } = "";
             public string DIACHI_TT { get; set; } = "";
+            public decimal TIEN_TTHUE { get; set; }
+            public decimal THUE { get; set; }
             public decimal TIEN_PT { get; set; }
             public string SOHD { get; set; } = "";
             public string NGAY_IN { get; set; } = "";
@@ -60,6 +62,8 @@ namespace Vnptthongbaocuoc.Controllers
             public string DiaChiKhachHang { get; set; } = "";
             public string ChuKyNo { get; set; } = "";
             public int SoDong { get; set; }
+            public decimal TongTienTruocThue { get; set; }
+            public decimal TongTienThue { get; set; }
             public decimal TongPT { get; set; }
             public List<PdfRow> Rows { get; set; } = new();
         }
@@ -71,7 +75,9 @@ namespace Vnptthongbaocuoc.Controllers
             var model = new PdfModel { Table = table, File = file };
 
             var sql = $@"
-SELECT MA_TT, ACCOUNT, TEN_TT, DIACHI_TT, 
+SELECT MA_TT, ACCOUNT, TEN_TT, DIACHI_TT,
+       TRY_CONVERT(DECIMAL(18,0), TIEN_TTHUE) AS TIEN_TTHUE,
+       TRY_CONVERT(DECIMAL(18,0), THUE) AS THUE,
        TRY_CONVERT(DECIMAL(18,0), TIEN_PT) AS TIEN_PT,
        SOHD, NGAY_IN, MA_TRACUUHD
 FROM [dbo].[{table}] WITH (NOLOCK)
@@ -83,6 +89,8 @@ FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file;
 
 SELECT COUNT(*) AS [RowCount],
+       SUM(TRY_CONVERT(DECIMAL(18,0), TIEN_TTHUE)) AS [SumTienTruocThue],
+       SUM(TRY_CONVERT(DECIMAL(18,0), THUE)) AS [SumTienThue],
        SUM(TRY_CONVERT(DECIMAL(18,0), TIEN_PT)) AS [SumPT]
 FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file;
@@ -105,6 +113,8 @@ WHERE TEN_FILE = @file;
                     ACCOUNT = rd["ACCOUNT"]?.ToString() ?? "",
                     TEN_TT = rd["TEN_TT"]?.ToString() ?? "",
                     DIACHI_TT = rd["DIACHI_TT"]?.ToString() ?? "",
+                    TIEN_TTHUE = rd["TIEN_TTHUE"] is DBNull ? 0 : (decimal)rd["TIEN_TTHUE"],
+                    THUE = rd["THUE"] is DBNull ? 0 : (decimal)rd["THUE"],
                     TIEN_PT = rd["TIEN_PT"] is DBNull ? 0 : (decimal)rd["TIEN_PT"],
                     SOHD = rd["SOHD"]?.ToString() ?? "",
                     NGAY_IN = rd["NGAY_IN"]?.ToString() ?? "",
@@ -124,6 +134,8 @@ WHERE TEN_FILE = @file;
             if (await rd.NextResultAsync() && await rd.ReadAsync())
             {
                 model.SoDong = rd["RowCount"] is DBNull ? 0 : Convert.ToInt32(rd["RowCount"]);
+                model.TongTienTruocThue = rd["SumTienTruocThue"] is DBNull ? 0 : Convert.ToDecimal(rd["SumTienTruocThue"]);
+                model.TongTienThue = rd["SumTienThue"] is DBNull ? 0 : Convert.ToDecimal(rd["SumTienThue"]);
                 model.TongPT = rd["SumPT"] is DBNull ? 0 : Convert.ToDecimal(rd["SumPT"]);
             }
 
@@ -238,6 +250,8 @@ WHERE TEN_FILE = @file;
            cols.RelativeColumn(2);
            cols.RelativeColumn(3);
            cols.ConstantColumn(90);
+           cols.ConstantColumn(90);
+           cols.ConstantColumn(90);
            cols.ConstantColumn(80);
            cols.ConstantColumn(80);
            cols.ConstantColumn(95);
@@ -250,6 +264,8 @@ WHERE TEN_FILE = @file;
            h.Cell().Element(CellHeaderCenter).Text("ACCOUNT");
            h.Cell().Element(CellHeaderCenter).Text("TÊN QUÝ KHÁCH");
            h.Cell().Element(CellHeaderCenter).Text("ĐỊA CHỈ");
+           h.Cell().Element(CellHeaderRight).Text("TIỀN TRƯỚC THUẾ");
+           h.Cell().Element(CellHeaderRight).Text("TIỀN THUẾ");
            h.Cell().Element(CellHeaderRight).Text("TIỀN PT");
            h.Cell().Element(CellHeaderCenter).Text("SỐ HĐ");
            h.Cell().Element(CellHeaderCenter).Text("NGÀY IN");
@@ -265,6 +281,8 @@ WHERE TEN_FILE = @file;
            table.Cell().Element(CellCenter).Text(r.ACCOUNT);
            table.Cell().Element(CellLeft).Text(r.TEN_TT);
            table.Cell().Element(CellLeft).Text(r.DIACHI_TT);
+           table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_TTHUE));
+           table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.THUE));
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_PT));
            table.Cell().Element(CellCenter).Text(r.SOHD);
            table.Cell().Element(CellCenter).Text(r.NGAY_IN);
@@ -274,8 +292,10 @@ WHERE TEN_FILE = @file;
        table.Footer(f =>
        {
            f.Cell().ColumnSpan(5).Element(CellTotalRight).Text("Tổng cộng:");
+           f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienTruocThue));
+           f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienThue));
            f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
-           f.Cell().ColumnSpan(3).Element(CellTotalRight).Text(""); 
+           f.Cell().ColumnSpan(3).Element(CellTotalRight).Text("");
        });
 
        // styles
