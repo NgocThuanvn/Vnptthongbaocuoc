@@ -307,6 +307,9 @@ WHERE TEN_FILE = @file;
                                     c2.Item().Height(55);
                                 }
 
+                                c2.Item().AlignCenter().Text("Phạm Thị Bé Ngoan");
+                                c2.Item().AlignCenter().Text("Số ĐT: 0919731888");
+
                             });
                         });
                     });
