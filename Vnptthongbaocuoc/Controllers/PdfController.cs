@@ -298,7 +298,14 @@ WHERE TEN_FILE = @file;
                                 c2.Item().Text($"Cần Thơ, ngày {DateTime.Now:dd} tháng {DateTime.Now:MM} năm {DateTime.Now:yyyy}")
                                     .AlignCenter();
                                 c2.Item().Text("Người giao").AlignCenter();
-                                c2.Item().Height(55);
+                                if (signImg != null)
+                                {
+                                    c2.Item().AlignCenter().PaddingTop(5).Width(120).Image(signImg).FitWidth();
+                                }
+                                else
+                                {
+                                    c2.Item().Height(55);
+                                }
 
                             });
                         });
