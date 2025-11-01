@@ -289,6 +289,19 @@ WHERE TEN_FILE = @file;
        static IContainer CellLeft(IContainer c) => c.Border(0.5f).Padding(3).AlignLeft();
    });
 
+                        col.Item().PaddingTop(10).Text(t =>
+                        {
+                            t.Line("Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày 24/10/2025");
+                            t.Line("- Tên tài khoản:  VIỄN THÔNG CẦN THƠ - TẬP ĐOÀN BƯU CHÍNH VIỄN THÔNG VIỆT NAM (CHI NHÁNH CTY TNHH)");
+                            t.Line("- Số tài khoản: 7600201.009180");
+                            t.Line("- Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
+                            t.Line("- Địa chỉ: 11 Phan Đình Phùng, Phường Ninh Kiều, Thành Phố Cần Thơ");
+                            t.Line("- Nội dung: Công Ty TNHH MTV  Nguyễn Hùng thanh toán cước DVVT");
+                            t.Line("- Quý khách hàng xem hoặc tải hóa đơn tại địa chỉ https://stg-tt78.vnpt-invoice.com.vn/ (mật khẩu Vnptst@123)");
+                            t.Line("Rất mong sự hổ trợ của quý khách hàng, nhằm giúp chúng tôi hoàn thành nhiệm vụ được giao.");
+                            t.Line("Trân trọng kính chào!");
+                        });
+
                         // chữ ký
                         col.Item().Row(r =>
                         {
