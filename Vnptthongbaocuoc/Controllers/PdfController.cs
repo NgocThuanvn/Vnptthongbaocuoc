@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -303,6 +304,8 @@ WHERE TEN_FILE = @file;
        static IContainer CellLeft(IContainer c) => c.Border(0.5f).Padding(3).AlignLeft();
    });
 
+                        col.Item().PaddingTop(4).Text($"Tổng tiền PT bằng chữ: {DocTienBangChu(m.TongPT)}").SemiBold().FontSize(10);
+
                         col.Item().PaddingTop(10).Text(t =>
                         {
                             t.Line("Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày 24/10/2025");
@@ -349,6 +352,121 @@ WHERE TEN_FILE = @file;
             });
 
             return doc.GeneratePdf();
+        }
+
+        private static readonly string[] ChuSo = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
+
+        private static string DocTienBangChu(decimal soTien)
+        {
+            var soTienLamTron = Math.Round(soTien, 0, MidpointRounding.AwayFromZero);
+            if (soTienLamTron <= 0)
+                return "Không đồng";
+
+            var units = new[] { "", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ" };
+            var groups = new List<int>();
+            var value = (long)soTienLamTron;
+
+            while (value > 0 && groups.Count < units.Length)
+            {
+                groups.Insert(0, (int)(value % 1000));
+                value /= 1000;
+            }
+
+            var parts = new List<string>();
+            var totalGroups = groups.Count;
+
+            for (var i = 0; i < totalGroups; i++)
+            {
+                var groupValue = groups[i];
+                if (groupValue == 0)
+                    continue;
+
+                var unitIndex = totalGroups - i - 1;
+                var docDayDu = i > 0;
+                var blockText = DocSo3ChuSo(groupValue, docDayDu);
+                parts.Add(($"{blockText}{units[unitIndex]}").Trim());
+            }
+
+            var result = string.Join(" ", parts.Where(p => !string.IsNullOrWhiteSpace(p))).Trim();
+            if (string.IsNullOrEmpty(result))
+                result = "Không";
+
+            result = char.ToUpper(result[0]) + result[1..];
+            return result + " đồng";
+        }
+
+        private static string DocSo3ChuSo(int soBaChuSo, bool docDayDu)
+        {
+            var tram = soBaChuSo / 100;
+            var chuc = (soBaChuSo % 100) / 10;
+            var donvi = soBaChuSo % 10;
+
+            var builder = new List<string>();
+
+            if (tram > 0)
+            {
+                builder.Add(ChuSo[tram] + " trăm");
+            }
+            else if (docDayDu && (chuc > 0 || donvi > 0))
+            {
+                builder.Add("không trăm");
+            }
+
+            if (chuc > 1)
+            {
+                builder.Add(ChuSo[chuc] + " mươi");
+                builder.Add(DocDonViKhiChucLonHonMot(donvi));
+            }
+            else if (chuc == 1)
+            {
+                builder.Add("mười");
+                builder.Add(DocDonViKhiChucBangMot(donvi));
+            }
+            else if (donvi > 0)
+            {
+                if (builder.Count > 0)
+                {
+                    builder.Add("linh");
+                }
+
+                builder.Add(DocDonViKhiChucBangKhong(donvi));
+            }
+
+            return string.Join(" ", builder.Where(x => !string.IsNullOrWhiteSpace(x))).Trim();
+        }
+
+        private static string DocDonViKhiChucLonHonMot(int donvi)
+        {
+            return donvi switch
+            {
+                0 => string.Empty,
+                1 => "mốt",
+                4 => "tư",
+                5 => "lăm",
+                _ => ChuSo[donvi]
+            };
+        }
+
+        private static string DocDonViKhiChucBangMot(int donvi)
+        {
+            return donvi switch
+            {
+                0 => string.Empty,
+                1 => "một",
+                4 => "bốn",
+                5 => "lăm",
+                _ => ChuSo[donvi]
+            };
+        }
+
+        private static string DocDonViKhiChucBangKhong(int donvi)
+        {
+            return donvi switch
+            {
+                0 => string.Empty,
+                5 => "năm",
+                _ => ChuSo[donvi]
+            };
         }
     }
 }
