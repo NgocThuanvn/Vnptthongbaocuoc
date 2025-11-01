@@ -247,7 +247,6 @@ WHERE TEN_FILE = @file;
            cols.ConstantColumn(25);
            cols.ConstantColumn(80);
            cols.ConstantColumn(85);
-           cols.RelativeColumn(2);
            cols.RelativeColumn(3);
            cols.ConstantColumn(90);
            cols.ConstantColumn(90);
@@ -263,7 +262,6 @@ WHERE TEN_FILE = @file;
            h.Cell().Element(CellHeaderCenter).Text("MÃ_TT");
            h.Cell().Element(CellHeaderCenter).Text("ACCOUNT");
            h.Cell().Element(CellHeaderCenter).Text("TÊN QUÝ KHÁCH");
-           h.Cell().Element(CellHeaderCenter).Text("ĐỊA CHỈ");
            h.Cell().Element(CellHeaderRight).Text("TIỀN TRƯỚC THUẾ");
            h.Cell().Element(CellHeaderRight).Text("TIỀN THUẾ");
            h.Cell().Element(CellHeaderRight).Text("TIỀN PT");
@@ -280,7 +278,6 @@ WHERE TEN_FILE = @file;
            table.Cell().Element(CellCenter).Text(r.MA_TT);
            table.Cell().Element(CellCenter).Text(r.ACCOUNT);
            table.Cell().Element(CellLeft).Text(r.TEN_TT);
-           table.Cell().Element(CellLeft).Text(r.DIACHI_TT);
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_TTHUE));
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.THUE));
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_PT));
@@ -289,14 +286,11 @@ WHERE TEN_FILE = @file;
            table.Cell().Element(CellCenter).Text(r.MA_TRACUUHD);
        }
 
-       table.Footer(f =>
-       {
-           f.Cell().ColumnSpan(5).Element(CellTotalRight).Text("Tổng cộng:");
-           f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienTruocThue));
-           f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienThue));
-           f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
-           f.Cell().ColumnSpan(3).Element(CellTotalRight).Text("");
-       });
+       table.Cell().ColumnSpan(4).Element(CellTotalRight).Text("Tổng cộng:");
+       table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienTruocThue));
+       table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienThue));
+       table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
+       table.Cell().ColumnSpan(3).Element(CellTotalRight).Text("");
 
        // styles
        static IContainer CellHeaderCenter(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
