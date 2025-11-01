@@ -296,7 +296,7 @@ WHERE TEN_FILE = @file;
                             t.Line("- Số tài khoản: 7600201.009180");
                             t.Line("- Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
                             t.Line("- Địa chỉ: 11 Phan Đình Phùng, Phường Ninh Kiều, Thành Phố Cần Thơ");
-                            t.Line("- Nội dung: Công Ty TNHH MTV  Nguyễn Hùng thanh toán cước DVVT");
+                            t.Line($"- Nội dung:{m.TenKhachHang} thanh toán cước DVVT");
                             t.Line("- Quý khách hàng xem hoặc tải hóa đơn tại địa chỉ https://stg-tt78.vnpt-invoice.com.vn/ (mật khẩu Vnptst@123)");
                             t.Line("Rất mong sự hổ trợ của quý khách hàng, nhằm giúp chúng tôi hoàn thành nhiệm vụ được giao.");
                             t.Line("Trân trọng kính chào!");
@@ -330,7 +330,7 @@ WHERE TEN_FILE = @file;
 
                     // footer
                     page.Footer().AlignCenter()
-                        .Text($"© VNPT Thông Báo Cước — File: {m.File} — Số dòng: {m.SoDong:N0}  ·  Tổng PT: {m.TongPT:N0}");
+                        .Text($"© VNPT Thông Báo Cước —Số dòng: {m.SoDong:N0}  ·  Tổng PT: {m.TongPT:N0}");
                 });
             });
 
