@@ -275,7 +275,7 @@ WHERE TEN_FILE = @file;
        {
            f.Cell().ColumnSpan(5).Element(CellTotalRight).Text("Tổng cộng:");
            f.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
-           f.Cell().ColumnSpan(3).Element(CellTotalRight).Text("");
+           f.Cell().ColumnSpan(3).Element(CellTotalRight).Text(""); 
        });
 
        // styles
