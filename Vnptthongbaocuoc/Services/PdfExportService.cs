@@ -95,6 +95,26 @@ WHERE TEN_FILE = @file;
 
             while (await rd.ReadAsync())
             {
+                var ngayInValue = rd["NGAY_IN"];
+                var ngayIn = string.Empty;
+
+                if (ngayInValue is DateTime ngayInDateTime)
+                {
+                    ngayIn = ngayInDateTime.ToString("dd/MM/yyyy");
+                }
+                else if (ngayInValue != DBNull.Value)
+                {
+                    var ngayInString = ngayInValue?.ToString();
+                    if (!string.IsNullOrWhiteSpace(ngayInString) && DateTime.TryParse(ngayInString, out var parsedNgayIn))
+                    {
+                        ngayIn = parsedNgayIn.ToString("dd/MM/yyyy");
+                    }
+                    else
+                    {
+                        ngayIn = ngayInString ?? string.Empty;
+                    }
+                }
+
                 model.Rows.Add(new PdfRow
                 {
                     MA_TT = rd["MA_TT"]?.ToString() ?? string.Empty,
@@ -105,7 +125,7 @@ WHERE TEN_FILE = @file;
                     THUE = rd["THUE"] is DBNull ? 0 : (decimal)rd["THUE"],
                     TIEN_PT = rd["TIEN_PT"] is DBNull ? 0 : (decimal)rd["TIEN_PT"],
                     SOHD = rd["SOHD"]?.ToString() ?? string.Empty,
-                    NGAY_IN = rd["NGAY_IN"]?.ToString() ?? string.Empty,
+                    NGAY_IN = ngayIn,
                     MA_TRACUUHD = rd["MA_TRACUUHD"]?.ToString() ?? string.Empty
                 });
             }
