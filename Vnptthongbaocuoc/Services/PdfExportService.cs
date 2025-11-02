@@ -213,7 +213,7 @@ WHERE TEN_FILE = @file;
                             .SemiBold().FontSize(13).AlignCenter();
 
                         // Hàng 3: dòng phụ
-                        h.Item().Text($"(V/v tiền cước sử dụng dịch vụ VT-CNTT tháng {m.ChuKyNo})")
+                        h.Item().Text($"(V/v tiền cước sử dụng dịch vụ VT-CNTT: {m.ChuKyNo})")
                             .FontSize(9).AlignCenter();
                         // Hàng 3: dòng phụ
                         h.Item().Text("")
@@ -227,19 +227,19 @@ WHERE TEN_FILE = @file;
                         col.Item().Text(t =>
                         {
                             t.Span("VNPT Cần Thơ xin thông báo đến quý khách hàng tiền cước các dịch vụ VT-CNTT quý khách  đã sử dụng cụ thể như sau:")
-                            .SemiBold().FontSize(12);
+                            .SemiBold().FontSize(10);
                         });
 
                         col.Item().Text(t =>
                         {
-                            t.Span(" -Kính gửi: ").SemiBold().FontSize(12);
-                            t.Span(m.TenKhachHang).SemiBold().FontSize(12);
+                            t.Span(" -Kính gửi: ").SemiBold().FontSize(10);
+                            t.Span(m.TenKhachHang).SemiBold().FontSize(10);
                         });
 
                         col.Item().Text(t =>
                         {
-                            t.Span(" -Địa chỉ: ").SemiBold().FontSize(12);
-                            t.Span(m.DiaChiKhachHang).SemiBold().FontSize(12);
+                            t.Span(" -Địa chỉ: ").SemiBold().FontSize(10);
+                            t.Span(m.DiaChiKhachHang).SemiBold().FontSize(10);
                         });
                         // Bảng chi tiết (cột chữ canh giữa, tiền PT canh phải)
 
@@ -317,7 +317,7 @@ WHERE TEN_FILE = @file;
                             t.Line("- Số tài khoản: 7600201.009180");
                             t.Line("- Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
                             t.Line("- Địa chỉ: 11 Phan Đình Phùng, Phường Ninh Kiều, Thành Phố Cần Thơ");
-                            t.Line($"- Nội dung:{m.TenKhachHang} thanh toán cước DVVT");
+                            t.Line($"- Nội dung: {m.TenKhachHang} thanh toán cước DVVT");
                             t.Line("- Quý khách hàng xem hoặc tải hóa đơn tại địa chỉ https://stg-tt78.vnpt-invoice.com.vn/ (mật khẩu Vnptst@123)");
                             t.Line("Rất mong sự hổ trợ của quý khách hàng, nhằm giúp chúng tôi hoàn thành nhiệm vụ được giao.");
                             t.Line("Trân trọng kính chào!");
