@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Vnptthongbaocuoc.Data;
 using Vnptthongbaocuoc.Models;
+using Vnptthongbaocuoc.Services;
 using QuestPDF.Infrastructure;   // <-- thêm
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<PdfExportService>();
 
 var app = builder.Build();
 // Đặt license QuestPDF (Community)

@@ -1,7 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Vnptthongbaocuoc.Services;
 
 namespace Vnptthongbaocuoc.Controllers
 {
@@ -9,7 +13,12 @@ namespace Vnptthongbaocuoc.Controllers
     public class DetailsController : Controller
     {
         private readonly IConfiguration _config;
-        public DetailsController(IConfiguration config) => _config = config;
+        private readonly PdfExportService _pdfExport;
+        public DetailsController(IConfiguration config, PdfExportService pdfExport)
+        {
+            _config = config;
+            _pdfExport = pdfExport;
+        }
 
         // ViewModel hiển thị mỗi dòng (mỗi TEN_FILE)
         public sealed class FileDetailItem
@@ -88,6 +97,50 @@ ORDER BY TEN_FILE;";
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DownloadSelected(string table, List<string>? files)
+        {
+            if (!IsSafeImportTableName(table))
+                return BadRequest("Tên bảng không hợp lệ hoặc không phải bảng import (Vnpt_...).");
+
+            if (files == null || files.Count == 0)
+                return BadRequest("Vui lòng chọn ít nhất một file.");
+
+            var distinctFiles = files
+                .Where(f => !string.IsNullOrWhiteSpace(f))
+                .Select(f => f.Trim())
+                .Where(f => f.Length > 0)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (distinctFiles.Count == 0)
+                return BadRequest("Vui lòng chọn ít nhất một file hợp lệ.");
+
+            var archiveStream = new MemoryStream();
+
+            using (var zip = new ZipArchive(archiveStream, ZipArchiveMode.Create, leaveOpen: true))
+            {
+                foreach (var file in distinctFiles)
+                {
+                    var pdfBytes = await _pdfExport.GeneratePdfAsync(table, file);
+                    if (pdfBytes == null || pdfBytes.Length == 0)
+                        continue;
+
+                    var entry = zip.CreateEntry($"ThongBao_{file}.pdf", CompressionLevel.Optimal);
+                    await using var entryStream = entry.Open();
+                    await entryStream.WriteAsync(pdfBytes, 0, pdfBytes.Length);
+                }
+            }
+
+            if (archiveStream.Length == 0)
+                return BadRequest("Không tạo được file nào từ lựa chọn của bạn.");
+
+            archiveStream.Position = 0;
+            var downloadName = $"ThongBao_{table}_{DateTime.UtcNow:yyyyMMddHHmmss}.zip";
+            return File(archiveStream, "application/zip", downloadName);
         }
 
         // Helpers
