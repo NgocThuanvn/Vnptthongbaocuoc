@@ -251,13 +251,14 @@ WHERE TEN_FILE = @file;
                             {
                                 col.Item().Text("VNPT CẦN THƠ").SemiBold().FontSize(11).AlignCenter();
                                 col.Item().Text("VNPT SÓC TRĂNG").SemiBold().FontSize(11).AlignCenter();
+                                col.Item().Text("-------------------").SemiBold().FontSize(11).AlignCenter();
                             });
                             // Cột 2: VNPT
                             table.Cell().Row(1).Column(2).AlignCenter().Column(col =>
                             {
                                 col.Item().Text("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM").SemiBold().FontSize(11).AlignCenter();
-                                col.Item().Text("Độc Lập - Tự Do - Hạnh Phúc").SemiBold().FontSize(11).AlignCenter().Underline();
-                                col.Item().Text("-------------------").SemiBold().FontSize(11).AlignCenter().Underline();
+                                col.Item().Text("Độc Lập - Tự Do - Hạnh Phúc").SemiBold().FontSize(11).AlignCenter();
+                                col.Item().Text("-------------------").SemiBold().FontSize(11).AlignCenter();
                             });
 
 
@@ -307,30 +308,30 @@ WHERE TEN_FILE = @file;
    {
        table.ColumnsDefinition(cols =>
        {
-           cols.ConstantColumn(25);
+           cols.ConstantColumn(30);
            cols.ConstantColumn(80);
            cols.ConstantColumn(85);
-           cols.RelativeColumn(4);
-           cols.ConstantColumn(70);
-           cols.ConstantColumn(70);
-           cols.ConstantColumn(70);
-           cols.ConstantColumn(70);
-           cols.ConstantColumn(70);
+           cols.RelativeColumn(6);
+           cols.ConstantColumn(60);
+           cols.ConstantColumn(60);
+           cols.ConstantColumn(60);
+           cols.ConstantColumn(60);
+           cols.ConstantColumn(60);
            cols.ConstantColumn(95);
        });
 
        table.Header(h =>
        {
-           h.Cell().Element(CellHeaderCenter).Text("#");
-           h.Cell().Element(CellHeaderCenter).Text("MÃ_TT");
-           h.Cell().Element(CellHeaderCenter).Text("ACCOUNT");
-           h.Cell().Element(CellHeaderCenter).Text("TÊN QUÝ KHÁCH");
-           h.Cell().Element(CellHeaderRight).Text("TIỀN TRƯỚC THUẾ");
-           h.Cell().Element(CellHeaderRight).Text("TIỀN THUẾ");
-           h.Cell().Element(CellHeaderRight).Text("TIỀN PT");
-           h.Cell().Element(CellHeaderCenter).Text("SỐ HĐ");
-           h.Cell().Element(CellHeaderCenter).Text("NGÀY IN");
-           h.Cell().Element(CellHeaderCenter).Text("MÃ TRA CỨU HD");
+           h.Cell().Element(CellHeaderCenter).Text("Stt");
+           h.Cell().Element(CellHeaderCenter).Text("Mã TT");
+           h.Cell().Element(CellHeaderCenter).Text("Account");
+           h.Cell().Element(CellHeaderCenter).Text("Tên Khách hàng");
+           h.Cell().Element(CellHeaderCenter).Text("Tiền T.Thuế");
+           h.Cell().Element(CellHeaderCenter).Text("Tiền thuế");
+           h.Cell().Element(CellHeaderCenter).Text("Tiền PT");
+           h.Cell().Element(CellHeaderCenter).Text("Số HĐ");
+           h.Cell().Element(CellHeaderCenter).Text("Ngày In");
+           h.Cell().Element(CellHeaderCenter).Text("Mã tra cứu HD");
        });
 
        var i = 0;
