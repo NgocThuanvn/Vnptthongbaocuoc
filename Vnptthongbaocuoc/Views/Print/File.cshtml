@@ -1,10 +1,28 @@
-﻿@model Vnptthongbaocuoc.Controllers.PrintController.PrintPageModel
+@model Vnptthongbaocuoc.Controllers.PrintController.PrintPageModel
 @{
     ViewData["Title"] = "Mẫu in - " + Model.File;
     var stampUrl = Url.Content("~/image/Mocnentrang.png");
     var signUrl  = Url.Content("~/image/chuky.png");
 }
 
+
+@functions {
+    string FormatNgayIn(string? rawValue)
+    {
+        var value = rawValue?.Trim();
+
+        if (string.IsNullOrEmpty(value) || value.Length != 8)
+        {
+            return value ?? string.Empty;
+        }
+
+        var dd = value.Substring(0, 2);
+        var mm = value.Substring(2, 2);
+        var yyyy = value.Substring(4, 4);
+
+        return $"{dd}/{mm}/{yyyy}";
+    }
+}
 <style>
 /* Bố cục trang hiển thị */
 .page { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
@@ -111,7 +129,7 @@
                             <td>@r.TEN_TT</td>
                             <td class="num mono">@Math.Round(r.TIEN_PT).ToString("N0")</td>
                             <td class="mono">@r.SOHD</td>
-                            <td class="mono">@r.NGAY_IN</td>
+                            <td class="mono">@FormatNgayIn(r.NGAY_IN)</td>
                             <td class="mono">@r.MA_TRACUUHD</td>
                             <td></td>
                         </tr>
