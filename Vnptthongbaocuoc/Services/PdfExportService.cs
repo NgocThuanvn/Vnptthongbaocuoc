@@ -225,7 +225,7 @@ WHERE TEN_FILE = @file;
                     // ========= CONTENT =========
                     page.Content().Column(col =>
                     {
-                        col.Spacing(5);
+                        col.Spacing(1);
                         col.Item().Text(t =>
                         {
                             t.Span("VNPT Cần Thơ xin thông báo đến quý khách hàng tiền cước các dịch vụ VT-CNTT quý khách  đã sử dụng cụ thể như sau:")
