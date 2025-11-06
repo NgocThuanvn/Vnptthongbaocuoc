@@ -22,6 +22,15 @@
             return parsed.ToString("dd/MM/yyyy");
         }
 
+        if (value.Length == 8)
+        {
+            var day = value.Substring(0, 2);
+            var month = value.Substring(2, 2);
+            var year = value.Substring(4, 4);
+
+            return $"{day}/{month}/{year}";
+        }
+
         var formats = new[]
         {
             "ddMMyyyy",
