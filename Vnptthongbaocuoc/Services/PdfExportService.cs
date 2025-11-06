@@ -37,6 +37,7 @@ namespace Vnptthongbaocuoc.Services
             public string ACCOUNT { get; set; } = string.Empty;
             public string TEN_TT { get; set; } = string.Empty;
             public string DIACHI_TT { get; set; } = string.Empty;
+            public string DCLAPDAT { get; set; } = string.Empty;
             public decimal TIEN_TTHUE { get; set; }
             public decimal THUE { get; set; }
             public decimal TIEN_PT { get; set; }
@@ -67,7 +68,7 @@ namespace Vnptthongbaocuoc.Services
             var model = new PdfModel { Table = table, File = file };
 
             var sql = $@"
-SELECT MA_TT, ACCOUNT, TEN_TT, DIACHI_TT,
+SELECT MA_TT, ACCOUNT, TEN_TT, DIACHI_TT, DCLAPDAT,
        TRY_CONVERT(DECIMAL(18,0), TIEN_TTHUE) AS TIEN_TTHUE,
        TRY_CONVERT(DECIMAL(18,0), THUE) AS THUE,
        TRY_CONVERT(DECIMAL(18,0), TIEN_PT) AS TIEN_PT,
@@ -106,6 +107,7 @@ WHERE TEN_FILE = @file;
                     ACCOUNT = rd["ACCOUNT"]?.ToString() ?? string.Empty,
                     TEN_TT = rd["TEN_TT"]?.ToString() ?? string.Empty,
                     DIACHI_TT = rd["DIACHI_TT"]?.ToString() ?? string.Empty,
+                    DCLAPDAT = rd["DCLAPDAT"]?.ToString() ?? string.Empty,
                     TIEN_TTHUE = rd["TIEN_TTHUE"] is DBNull ? 0 : (decimal)rd["TIEN_TTHUE"],
                     THUE = rd["THUE"] is DBNull ? 0 : (decimal)rd["THUE"],
                     TIEN_PT = rd["TIEN_PT"] is DBNull ? 0 : (decimal)rd["TIEN_PT"],
@@ -338,7 +340,7 @@ WHERE TEN_FILE = @file;
            table.Cell().Element(CellCenter).Text(i.ToString());
            table.Cell().Element(CellCenter).Text(r.MA_TT);
            table.Cell().Element(CellCenter).Text(r.ACCOUNT);
-           table.Cell().Element(CellLeft).Text(r.TEN_TT);
+           table.Cell().Element(CellLeft).Text(string.IsNullOrWhiteSpace(r.DCLAPDAT) ? r.TEN_TT : r.DCLAPDAT);
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_TTHUE));
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.THUE));
            table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_PT));
