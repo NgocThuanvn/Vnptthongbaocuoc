@@ -52,6 +52,8 @@ namespace Vnptthongbaocuoc.Services
             public string TenKhachHang { get; set; } = string.Empty;
             public string DiaChiKhachHang { get; set; } = string.Empty;
             public string ChuKyNo { get; set; } = string.Empty;
+            public string NgayInFile { get; set; } = string.Empty;
+            public string ThoiHanThanhToan { get; set; } = string.Empty;
             public int SoDong { get; set; }
             public decimal TongTienTruocThue { get; set; }
             public decimal TongTienThue { get; set; }
@@ -74,7 +76,7 @@ FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file
 ORDER BY TEN_TT, ACCOUNT;
 
-SELECT TOP 1 TEN_TT AS TenKH, DIACHI_TT AS DiaChi, CHUKYNO
+SELECT TOP 1 TEN_TT AS TenKH, DIACHI_TT AS DiaChi, CHUKYNO, Ngayinfile, Thoihanthanhtoan
 FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file;
 
@@ -118,6 +120,8 @@ WHERE TEN_FILE = @file;
                 model.TenKhachHang = rd["TenKH"]?.ToString() ?? string.Empty;
                 model.DiaChiKhachHang = rd["DiaChi"]?.ToString() ?? string.Empty;
                 model.ChuKyNo = rd["CHUKYNO"]?.ToString() ?? string.Empty;
+                model.NgayInFile = rd["Ngayinfile"]?.ToString() ?? string.Empty;
+                model.ThoiHanThanhToan = rd["Thoihanthanhtoan"]?.ToString() ?? string.Empty;
             }
 
             if (await rd.NextResultAsync() && await rd.ReadAsync())
@@ -158,6 +162,42 @@ WHERE TEN_FILE = @file;
             }
 
             return ngayInString;
+        }
+
+        private static string FormatEightDigitDate(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var trimmed = value.Trim();
+            if (trimmed.Length >= 8)
+            {
+                var dd = trimmed.Substring(0, 2);
+                var mm = trimmed.Substring(2, 2);
+                var yyyy = trimmed.Substring(4, 4);
+                return $"{dd}/{mm}/{yyyy}";
+            }
+
+            return trimmed;
+        }
+
+        private static (string Day, string Month, string Year) GetEightDigitDateParts(string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                var trimmed = value.Trim();
+                if (trimmed.Length >= 8)
+                {
+                    return (trimmed.Substring(0, 2), trimmed.Substring(2, 2), trimmed.Substring(4, 4));
+                }
+            }
+
+            var now = DateTime.Now;
+            return (now.ToString("dd", CultureInfo.InvariantCulture),
+                now.ToString("MM", CultureInfo.InvariantCulture),
+                now.ToString("yyyy", CultureInfo.InvariantCulture));
         }
 
         private byte[] BuildPdf(PdfModel m)
@@ -334,7 +374,9 @@ WHERE TEN_FILE = @file;
                         col.Item().PaddingTop(0).Text(t =>
                         {
                             t.Line($"Tổng tiền PT bằng chữ: {DocTienBangChu(m.TongPT)}").Italic().Bold();
-                            t.Line("Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày 24/10/2025");
+                            var hanThanhToan = FormatEightDigitDate(m.ThoiHanThanhToan);
+                            var hanThanhToanText = string.IsNullOrEmpty(hanThanhToan) ? m.ThoiHanThanhToan : hanThanhToan;
+                            t.Line($"Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày {hanThanhToanText}");
                             t.Line("- Tên tài khoản:  VIỄN THÔNG CẦN THƠ - TẬP ĐOÀN BƯU CHÍNH VIỄN THÔNG VIỆT NAM (CHI NHÁNH CTY TNHH)");
                             t.Line("- Số tài khoản: 7600201.009180 - Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
                             t.Line("- Địa chỉ: 11 Phan Đình Phùng, Phường Ninh Kiều, Thành Phố Cần Thơ");
@@ -350,7 +392,8 @@ WHERE TEN_FILE = @file;
                             r.RelativeItem().Text("Người nhận\n(Ký & ghi rõ họ tên)").AlignCenter();
                             r.RelativeItem().Column(c2 =>
                             {
-                                c2.Item().Text($"Cần Thơ, ngày {DateTime.Now:dd} tháng {DateTime.Now:MM} năm {DateTime.Now:yyyy}")
+                                var (ngay, thang, nam) = GetEightDigitDateParts(m.NgayInFile);
+                                c2.Item().Text($"Cần Thơ, ngày {ngay} tháng {thang} năm {nam}")
                                     .AlignCenter();
                                 c2.Item().Text("Người giao").AlignCenter();
                                 if (signImg != null)
