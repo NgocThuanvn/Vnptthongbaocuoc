@@ -183,8 +183,7 @@ namespace Vnptthongbaocuoc.Controllers
 
                     if (key.Equals("NGAY_IN", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (DateTime.TryParse(txt, out var d)) val = d.Date;
-                        else val = DBNull.Value;
+                        val = string.IsNullOrWhiteSpace(txt) ? DBNull.Value : txt;
                     }
                     else if (key is "TIEN_TTHUE" or "THUE" or "TIEN_PT")
                     {
@@ -320,7 +319,7 @@ namespace Vnptthongbaocuoc.Controllers
                 string sqlType = h switch
                 {
                     "TIEN_TTHUE" or "THUE" or "TIEN_PT" => "DECIMAL(18,0) NULL",
-                    "NGAY_IN" => "DATE NULL",
+                    "NGAY_IN" => "NVARCHAR(255) NULL",
                     "DIACHI_TT" => "NVARCHAR(500) NULL",
                     "EMAIL" or "TEN_TT" or "TEN_FILE" or "CHUKYNO" => "NVARCHAR(255) NULL",
                     _ => "NVARCHAR(255) NULL"
