@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
@@ -95,39 +96,7 @@ WHERE TEN_FILE = @file;
 
             while (await rd.ReadAsync())
             {
-                var ngayInValue = rd["NGAY_IN"];
-                var ngayIn = string.Empty;
-
-                if (ngayInValue is DateTime ngayInDateTime)
-                {
-                    ngayIn = ngayInDateTime.ToString("dd/MM/yyyy");
-                }
-                else if (ngayInValue != DBNull.Value)
-                {
-                    var ngayInString = ngayInValue?.ToString()?.Trim();
-                    if (!string.IsNullOrWhiteSpace(ngayInString))
-                    {
-                        if (DateTime.TryParse(ngayInString, out var parsedNgayIn))
-                        {
-                            ngayIn = parsedNgayIn.ToString("dd/MM/yyyy");
-                        }
-                        else
-                        {
-                            var numericNgayIn = new string(ngayInString.Where(char.IsDigit).ToArray());
-                            if (numericNgayIn.Length == 8)
-                            {
-                                var day = numericNgayIn.Substring(0, 2);
-                                var month = numericNgayIn.Substring(2, 2);
-                                var year = numericNgayIn.Substring(4, 4);
-                                ngayIn = $"{day}/{month}/{year}";
-                            }
-                            else
-                            {
-                                ngayIn = ngayInString;
-                            }
-                        }
-                    }
-                }
+                var ngayIn = FormatNgayIn(rd["NGAY_IN"]);
 
                 model.Rows.Add(new PdfRow
                 {
@@ -160,6 +129,43 @@ WHERE TEN_FILE = @file;
             }
 
             return model;
+        }
+
+        private static string FormatNgayIn(object? value)
+        {
+            if (value is null || value == DBNull.Value)
+            {
+                return string.Empty;
+            }
+
+            if (value is DateTime ngayInDateTime)
+            {
+                return ngayInDateTime.ToString("dd/MM/yyyy");
+            }
+
+            var ngayInString = value.ToString()?.Trim();
+            if (string.IsNullOrWhiteSpace(ngayInString))
+            {
+                return string.Empty;
+            }
+
+            if (DateTime.TryParseExact(ngayInString, "ddMMyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedExact))
+            {
+                return parsedExact.ToString("dd/MM/yyyy");
+            }
+
+            if (DateTime.TryParse(ngayInString, out var parsedNgayIn))
+            {
+                return parsedNgayIn.ToString("dd/MM/yyyy");
+            }
+
+            var numericNgayIn = new string(ngayInString.Where(char.IsDigit).ToArray());
+            if (numericNgayIn.Length == 8 && DateTime.TryParseExact(numericNgayIn, "ddMMyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedNumeric))
+            {
+                return parsedNumeric.ToString("dd/MM/yyyy");
+            }
+
+            return ngayInString;
         }
 
         private byte[] BuildPdf(PdfModel m)
