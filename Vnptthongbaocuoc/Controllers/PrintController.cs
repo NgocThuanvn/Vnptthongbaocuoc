@@ -18,6 +18,7 @@ namespace Vnptthongbaocuoc.Controllers
             public string? ACCOUNT { get; set; }
             public string? TEN_TT { get; set; }
             public string? DIACHI_TT { get; set; }
+            public string? DCLAPDAT { get; set; }
             public decimal TIEN_TTHUE { get; set; }
             public decimal THUE { get; set; }
             public decimal TIEN_PT { get; set; }
@@ -79,8 +80,8 @@ FROM [dbo].[{table}] WHERE TEN_FILE=@f;";
 
             // Body: toàn bộ dòng thuộc TEN_FILE
             var sqlRows = $@"
-SELECT 
-    MA_TT, ACCOUNT, TEN_TT, DIACHI_TT,
+SELECT
+    MA_TT, ACCOUNT, TEN_TT, DIACHI_TT, DCLAPDAT,
     COALESCE(TRY_CONVERT(DECIMAL(38,0), TIEN_TTHUE),0) AS TIEN_TTHUE,
     COALESCE(TRY_CONVERT(DECIMAL(38,0), THUE),0)       AS THUE,
     COALESCE(TRY_CONVERT(DECIMAL(38,0), TIEN_PT),0)    AS TIEN_PT,
@@ -102,9 +103,10 @@ ORDER BY MA_TT, ACCOUNT;";
                         ACCOUNT = rd["ACCOUNT"] as string,
                         TEN_TT = rd["TEN_TT"] as string,
                         DIACHI_TT = rd["DIACHI_TT"] as string,
-                        TIEN_TTHUE = rd.IsDBNull(4) ? 0 : Convert.ToDecimal(rd.GetValue(4)),
-                        THUE = rd.IsDBNull(5) ? 0 : Convert.ToDecimal(rd.GetValue(5)),
-                        TIEN_PT = rd.IsDBNull(6) ? 0 : Convert.ToDecimal(rd.GetValue(6)),
+                        DCLAPDAT = rd["DCLAPDAT"] as string,
+                        TIEN_TTHUE = rd["TIEN_TTHUE"] is DBNull ? 0 : Convert.ToDecimal(rd["TIEN_TTHUE"]),
+                        THUE = rd["THUE"] is DBNull ? 0 : Convert.ToDecimal(rd["THUE"]),
+                        TIEN_PT = rd["TIEN_PT"] is DBNull ? 0 : Convert.ToDecimal(rd["TIEN_PT"]),
                         SOHD = rd["SOHD"] as string,
                         NGAY_IN = rd["NGAY_IN"] as string,
                         MA_TRACUUHD = rd["MA_TRACUUHD"] as string
