@@ -104,14 +104,28 @@ WHERE TEN_FILE = @file;
                 }
                 else if (ngayInValue != DBNull.Value)
                 {
-                    var ngayInString = ngayInValue?.ToString();
-                    if (!string.IsNullOrWhiteSpace(ngayInString) && DateTime.TryParse(ngayInString, out var parsedNgayIn))
+                    var ngayInString = ngayInValue?.ToString()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(ngayInString))
                     {
-                        ngayIn = parsedNgayIn.ToString("dd/MM/yyyy");
-                    }
-                    else
-                    {
-                        ngayIn = ngayInString ?? string.Empty;
+                        if (DateTime.TryParse(ngayInString, out var parsedNgayIn))
+                        {
+                            ngayIn = parsedNgayIn.ToString("dd/MM/yyyy");
+                        }
+                        else
+                        {
+                            var numericNgayIn = new string(ngayInString.Where(char.IsDigit).ToArray());
+                            if (numericNgayIn.Length == 8)
+                            {
+                                var day = numericNgayIn.Substring(0, 2);
+                                var month = numericNgayIn.Substring(2, 2);
+                                var year = numericNgayIn.Substring(4, 4);
+                                ngayIn = $"{day}/{month}/{year}";
+                            }
+                            else
+                            {
+                                ngayIn = ngayInString;
+                            }
+                        }
                     }
                 }
 
