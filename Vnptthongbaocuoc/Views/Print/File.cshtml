@@ -1,3 +1,4 @@
+@using System.Globalization
 @model Vnptthongbaocuoc.Controllers.PrintController.PrintPageModel
 @{
     ViewData["Title"] = "Mẫu in - " + Model.File;
@@ -11,16 +12,32 @@
     {
         var value = rawValue?.Trim();
 
-        if (string.IsNullOrEmpty(value) || value.Length != 8)
+        if (string.IsNullOrEmpty(value))
         {
-            return value ?? string.Empty;
+            return string.Empty;
         }
 
-        var dd = value.Substring(0, 2);
-        var mm = value.Substring(2, 2);
-        var yyyy = value.Substring(4, 4);
+        if (DateTime.TryParse(value, out var parsed))
+        {
+            return parsed.ToString("dd/MM/yyyy");
+        }
 
-        return $"{dd}/{mm}/{yyyy}";
+        var formats = new[]
+        {
+            "ddMMyyyy",
+            "yyyyMMdd",
+            "dd/MM/yyyy",
+            "yyyy/MM/dd",
+            "dd-MM-yyyy",
+            "yyyy-MM-dd"
+        };
+
+        if (DateTime.TryParseExact(value, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+        {
+            return parsed.ToString("dd/MM/yyyy");
+        }
+
+        return value;
     }
 }
 <style>
