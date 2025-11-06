@@ -149,20 +149,12 @@ WHERE TEN_FILE = @file;
                 return string.Empty;
             }
 
-            if (DateTime.TryParseExact(ngayInString, "ddMMyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedExact))
+            if (ngayInString.Length >= 8)
             {
-                return parsedExact.ToString("dd/MM/yyyy");
-            }
-
-            if (DateTime.TryParse(ngayInString, out var parsedNgayIn))
-            {
-                return parsedNgayIn.ToString("dd/MM/yyyy");
-            }
-
-            var numericNgayIn = new string(ngayInString.Where(char.IsDigit).ToArray());
-            if (numericNgayIn.Length == 8 && DateTime.TryParseExact(numericNgayIn, "ddMMyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedNumeric))
-            {
-                return parsedNumeric.ToString("dd/MM/yyyy");
+                var dd = ngayInString.Substring(0, 2);
+                var mm = ngayInString.Substring(2, 2);
+                var yyyy = ngayInString.Substring(4, 4);
+                return $"{dd}/{mm}/{yyyy}";
             }
 
             return ngayInString;
