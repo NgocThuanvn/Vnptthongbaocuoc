@@ -256,12 +256,12 @@ WHERE TEN_FILE = @file;
            cols.ConstantColumn(25);
            cols.ConstantColumn(80);
            cols.ConstantColumn(85);
-           cols.RelativeColumn(3);
-           cols.ConstantColumn(90);
-           cols.ConstantColumn(90);
-           cols.ConstantColumn(90);
-           cols.ConstantColumn(80);
-           cols.ConstantColumn(80);
+           cols.RelativeColumn(4);
+           cols.ConstantColumn(70);
+           cols.ConstantColumn(70);
+           cols.ConstantColumn(70);
+           cols.ConstantColumn(70);
+           cols.ConstantColumn(70);
            cols.ConstantColumn(95);
        });
 
@@ -318,18 +318,17 @@ WHERE TEN_FILE = @file;
        static IContainer CellLeft(IContainer c) => c.Border(0.5f).Padding(3).AlignLeft();
    });
 
-                        col.Item().PaddingTop(4).Text($"Tổng tiền PT bằng chữ: {DocTienBangChu(m.TongPT)}").SemiBold().FontSize(10);
-
-                        col.Item().PaddingTop(10).Text(t =>
+                     
+                        col.Item().PaddingTop(0).Text(t =>
                         {
+                            t.Line($"Tổng tiền PT bằng chữ: {DocTienBangChu(m.TongPT)}").Italic().Bold();
                             t.Line("Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày 24/10/2025");
                             t.Line("- Tên tài khoản:  VIỄN THÔNG CẦN THƠ - TẬP ĐOÀN BƯU CHÍNH VIỄN THÔNG VIỆT NAM (CHI NHÁNH CTY TNHH)");
-                            t.Line("- Số tài khoản: 7600201.009180");
-                            t.Line("- Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
+                            t.Line("- Số tài khoản: 7600201.009180 - Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
                             t.Line("- Địa chỉ: 11 Phan Đình Phùng, Phường Ninh Kiều, Thành Phố Cần Thơ");
                             t.Line($"- Nội dung: {m.TenKhachHang} thanh toán cước DVVT");
                             t.Line("- Quý khách hàng xem hoặc tải hóa đơn tại địa chỉ https://stg-tt78.vnpt-invoice.com.vn/ (mật khẩu Vnptst@123)");
-                            t.Line("Rất mong sự hổ trợ của quý khách hàng, nhằm giúp chúng tôi hoàn thành nhiệm vụ được giao.");
+                            t.Line("Rất mong sự hỗ trợ của quý khách hàng, nhằm giúp chúng tôi hoàn thành nhiệm vụ được giao.");
                             t.Line("Trân trọng kính chào!");
                         });
 
@@ -351,8 +350,8 @@ WHERE TEN_FILE = @file;
                                     c2.Item().Height(55);
                                 }
 
-                                c2.Item().AlignCenter().Text("Phạm Thị Bé Ngoan");
-                                c2.Item().AlignCenter().Text("Số ĐT: 0919731888");
+                                c2.Item().AlignCenter().Text("Trịnh Mỹ Hộ");
+                                c2.Item().AlignCenter().Text("Số ĐT: 0911814999");
 
                             });
                         });
