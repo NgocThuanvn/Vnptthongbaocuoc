@@ -166,7 +166,9 @@ WHERE TEN_FILE = @file;
                 {
                     page.Size(PageSizes.A4.Landscape());  // A4 ngang
                     page.Margin(20);
-                    page.DefaultTextStyle(t => t.FontSize(10));
+                    page.DefaultTextStyle(t => t
+                        .FontFamily("Times New Roman")
+                        .FontSize(10));
 
                     // ========= Stamp & Signature foreground =========
                     page.Foreground()
@@ -244,7 +246,9 @@ WHERE TEN_FILE = @file;
                         // Bảng chi tiết (cột chữ canh giữa, tiền PT canh phải)
 
                         col.Item()
-   .Element(e => e.DefaultTextStyle(t => t.FontSize(9)))   // áp dụng font 10 cho toàn bảng
+   .Element(e => e.DefaultTextStyle(t => t
+       .FontFamily("Times New Roman")
+       .FontSize(9)))   // áp dụng font 10 cho toàn bảng
    .Table(table =>
    {
        table.ColumnsDefinition(cols =>
@@ -299,12 +303,18 @@ WHERE TEN_FILE = @file;
 
        // styles
        static IContainer CellHeaderCenter(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
-           .Padding(4).AlignCenter().DefaultTextStyle(x => x.SemiBold());
+           .Padding(4).AlignCenter().DefaultTextStyle(x => x
+               .FontFamily("Times New Roman")
+               .SemiBold());
        static IContainer CellHeaderRight(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
-           .Padding(4).AlignRight().DefaultTextStyle(x => x.SemiBold());
+           .Padding(4).AlignRight().DefaultTextStyle(x => x
+               .FontFamily("Times New Roman")
+               .SemiBold());
        static IContainer CellCenter(IContainer c) => c.Border(0.5f).Padding(3).AlignCenter();
        static IContainer CellRight(IContainer c) => c.Border(0.5f).Padding(3).AlignRight();
-       static IContainer CellTotalRight(IContainer c) => c.Border(0.5f).Padding(4).AlignRight().DefaultTextStyle(x => x.SemiBold());
+       static IContainer CellTotalRight(IContainer c) => c.Border(0.5f).Padding(4).AlignRight().DefaultTextStyle(x => x
+           .FontFamily("Times New Roman")
+           .SemiBold());
        static IContainer CellLeft(IContainer c) => c.Border(0.5f).Padding(3).AlignLeft();
    });
 
