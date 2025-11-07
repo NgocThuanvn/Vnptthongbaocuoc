@@ -283,7 +283,7 @@ WHERE TEN_FILE = @file;
                         col.Spacing(1);
                         col.Item().Text(t =>
                         {
-                            t.Span("VNPT Cần Thơ xin thông báo đến quý khách hàng tiền cước các dịch vụ VT-CNTT quý khách  đã sử dụng cụ thể như sau:")
+                            t.Span("VNPT Sóc Trăng xin thông báo đến quý khách hàng tiền cước các dịch vụ VT-CNTT quý khách  đã sử dụng cụ thể như sau:")
                             .SemiBold().FontSize(10);
                         });
 
