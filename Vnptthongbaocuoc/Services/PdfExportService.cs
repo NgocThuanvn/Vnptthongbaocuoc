@@ -377,6 +377,12 @@ WHERE TEN_FILE = @file;
                         col.Item().PaddingTop(0).Text(t =>
                         {
                             t.Line($"Tổng tiền PT bằng chữ: {DocTienBangChu(m.TongPT)}").Italic().Bold();
+                        });
+
+                        col.Item().PageBreak();
+
+                        col.Item().PaddingTop(0).Text(t =>
+                        {
                             var hanThanhToan = FormatEightDigitDate(m.ThoiHanThanhToan);
                             var hanThanhToanText = string.IsNullOrEmpty(hanThanhToan) ? m.ThoiHanThanhToan : hanThanhToan;
                             t.Line($"Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày {hanThanhToanText}");
