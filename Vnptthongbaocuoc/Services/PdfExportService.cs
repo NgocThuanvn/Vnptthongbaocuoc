@@ -379,7 +379,7 @@ WHERE TEN_FILE = @file;
                             t.Line($"Tổng tiền PT bằng chữ: {DocTienBangChu(m.TongPT)}").Italic().Bold();
                         });
 
-                        col.Item().PageBreak();
+                        //col.Item().PageBreak();
 
                         col.Item().PaddingTop(0).Text(t =>
                         {
