@@ -1,3 +1,5 @@
+using System.Security.Authentication;
+using MailKit.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -181,9 +183,25 @@ public class MailSettingsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Không thể gửi thư thử đến {Recipient}", model.TestRecipient);
-            TempData[nameof(MailSettingsViewModel.ErrorMessage)] = "Gửi thư thất bại: " + ex.Message;
+            var friendlyMessage = GetFriendlyErrorMessage(ex);
+            TempData[nameof(MailSettingsViewModel.ErrorMessage)] = "Gửi thư thất bại: " + friendlyMessage;
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private static string GetFriendlyErrorMessage(Exception exception)
+    {
+        if (exception is SslHandshakeException || exception is AuthenticationException)
+        {
+            return "Không thể thiết lập kết nối bảo mật với máy chủ SMTP. Nếu đang sử dụng cổng 587, hãy cấu hình STARTTLS (không bật SSL trực tiếp) hoặc chuyển sang cổng 465.";
+        }
+
+        if (exception.InnerException is not null)
+        {
+            return GetFriendlyErrorMessage(exception.InnerException);
+        }
+
+        return exception.Message;
     }
 }
