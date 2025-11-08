@@ -1,0 +1,250 @@
+@model Vnptthongbaocuoc.Models.Mail.MailTestViewModel
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "Gửi thư thử nghiệm";
+}
+
+<style>
+    .mailtest-wrap {
+        max-width: 760px;
+        margin: 32px auto;
+        padding: 0 16px 40px;
+    }
+
+    .mailtest-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 12px;
+    }
+
+    .mailtest-subtitle {
+        margin: 0 0 20px;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .mailtest-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, .08);
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .mailtest-card h2 {
+        margin: 0 0 16px;
+        font-size: 20px;
+        color: #0f172a;
+    }
+
+    .mailtest-alert {
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        border: 1px solid transparent;
+        font-size: 14px;
+    }
+
+    .mailtest-alert--ok {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+        color: #166534;
+    }
+
+    .mailtest-alert--err {
+        border-color: #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+    }
+
+    .mailtest-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 24px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 14px;
+        color: #334155;
+    }
+
+    .mailtest-summary strong {
+        display: block;
+        color: #0f172a;
+        font-size: 13px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .mailtest-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 24px;
+    }
+
+    .mailtest-grid--single {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mailtest-field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .mailtest-input,
+    .mailtest-textarea {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        font-size: 14px;
+        background: #fff;
+        color: #0f172a;
+        outline: none;
+    }
+
+        .mailtest-input:focus,
+        .mailtest-textarea:focus {
+            border-color: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.14);
+        }
+
+    .mailtest-textarea {
+        min-height: 160px;
+        resize: vertical;
+    }
+
+    .mailtest-actions {
+        margin-top: 22px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+        .mailtest-actions .btn {
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-size: 14px;
+        }
+
+    .mailtest-validation {
+        border-radius: 12px;
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 13px;
+    }
+
+    .text-danger {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    @media (max-width: 900px) {
+        .mailtest-grid,
+        .mailtest-actions {
+            grid-template-columns: 1fr;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+            .mailtest-actions .btn {
+                width: 100%;
+            }
+    }
+</style>
+
+<div class="mailtest-wrap">
+    <h1 class="mailtest-title">Gửi thư thử nghiệm</h1>
+    <p class="mailtest-subtitle">
+        Trang này sử dụng cấu hình SMTP đã lưu để gửi một email thử nghiệm nhằm kiểm tra khả năng gửi thư của hệ thống.
+    </p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="mailtest-alert mailtest-alert--ok">@Model.StatusMessage</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="mailtest-alert mailtest-alert--err">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.HasConfiguration)
+    {
+        <div class="mailtest-card">
+            <h2>Thông tin cấu hình đang sử dụng</h2>
+            <ul class="mailtest-summary">
+                <li>
+                    <strong>Máy chủ</strong>
+                    @(Model.Configuration!.Host):@Model.Configuration.Port
+                </li>
+                <li>
+                    <strong>Người gửi</strong>
+                    @Model.Configuration.FromAddress<br />
+                    @if (!string.IsNullOrWhiteSpace(Model.Configuration.FromName))
+                    {
+                        <span>@Model.Configuration.FromName</span>
+                    }
+                </li>
+                <li>
+                    <strong>Bảo mật</strong>
+                    @(Model.Configuration.UseSsl ? "SSL/TLS" : "Không dùng SSL")
+                </li>
+                <li>
+                    <strong>Xác thực</strong>
+                    @(Model.Configuration.UseAuthentication ? "Có" : "Không")
+                </li>
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Send" method="post" class="mailtest-card">
+        @Html.AntiForgeryToken()
+        <h2>Gửi email thử</h2>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="ModelOnly" class="mailtest-validation"></div>
+        }
+
+        <div class="mailtest-grid mailtest-grid--single">
+            <div class="mailtest-field">
+                <label asp-for="Recipient"></label>
+                <input asp-for="Recipient" class="mailtest-input" type="email" />
+                <span asp-validation-for="Recipient" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mailtest-grid mailtest-grid--single" style="margin-top: 16px;">
+            <div class="mailtest-field">
+                <label asp-for="Subject"></label>
+                <input asp-for="Subject" class="mailtest-input" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mailtest-field" style="margin-top: 16px;">
+            <label asp-for="Body"></label>
+            <textarea asp-for="Body" class="mailtest-textarea"></textarea>
+            <span asp-validation-for="Body" class="text-danger"></span>
+        </div>
+
+        <div class="mailtest-actions">
+            <button type="submit" class="btn btn-primary">Gửi thư thử</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
