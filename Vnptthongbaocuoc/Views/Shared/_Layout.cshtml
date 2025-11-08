@@ -46,6 +46,7 @@
                             @if (isAdmin)
                             {
                                 <a class="dropdown-item" href="/Admin">Quản trị</a>
+                                <a class="dropdown-item" asp-controller="MailSettings" asp-action="Index">Cấu hình SMTP</a>
                             }
                             <form class="dropdown-item" asp-controller="Account" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()
