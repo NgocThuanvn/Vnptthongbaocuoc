@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Vnptthongbaocuoc.Models;
+using Vnptthongbaocuoc.Models.Mail;
 
 namespace Vnptthongbaocuoc.Data
 {
@@ -12,7 +13,6 @@ namespace Vnptthongbaocuoc.Data
         {
         }
 
-        // DbSet nghiệp vụ sẽ thêm vào đây sau
-        // public DbSet<...> ... { get; set; } = default!;
+        public DbSet<SmtpConfiguration> SmtpConfigurations { get; set; } = default!;
     }
 }

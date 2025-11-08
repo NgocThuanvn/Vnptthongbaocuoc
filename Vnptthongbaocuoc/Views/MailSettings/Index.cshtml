@@ -1,0 +1,311 @@
+@model Vnptthongbaocuoc.Models.Mail.MailSettingsViewModel
+@{
+    ViewData["Title"] = "Cấu hình gửi mail (SMTP)";
+}
+
+<style>
+    .smtp-wrap {
+        max-width: 900px;
+        margin: 24px auto;
+        padding: 0 16px 32px;
+    }
+
+    .smtp-title {
+        font-size: 30px;
+        margin: 0 0 8px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .smtp-subtitle {
+        margin: 0 0 20px;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .smtp-alert {
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        border: 1px solid transparent;
+    }
+
+    .smtp-alert--ok {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+        color: #166534;
+    }
+
+    .smtp-alert--err {
+        border-color: #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+    }
+
+    .smtp-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        padding: 24px;
+        margin-bottom: 28px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+    }
+
+    .smtp-card h2 {
+        margin-top: 0;
+        margin-bottom: 18px;
+        font-size: 20px;
+        color: #0f172a;
+    }
+
+    .smtp-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 24px;
+    }
+
+    .smtp-grid--single {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .smtp-field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #334155;
+        font-weight: 600;
+    }
+
+    .smtp-input,
+    .smtp-textarea {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        font-size: 14px;
+        background: #fff;
+        color: #0f172a;
+        outline: none;
+    }
+
+        .smtp-input:focus,
+        .smtp-textarea:focus {
+            border-color: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.14);
+        }
+
+    .smtp-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .smtp-checkbox {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+
+        .smtp-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .smtp-checkbox label {
+            margin: 0;
+            font-weight: 600;
+            color: #0f172a;
+            cursor: pointer;
+        }
+
+    .smtp-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    .smtp-actions {
+        margin-top: 22px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+        .smtp-actions .btn {
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-size: 14px;
+        }
+
+    .smtp-validation {
+        border-radius: 12px;
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 13px;
+    }
+
+    .smtp-validation ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+    .text-danger {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .smtp-checkbox-group {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 900px) {
+        .smtp-grid,
+        .smtp-checkbox-group {
+            grid-template-columns: 1fr;
+        }
+
+        .smtp-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .smtp-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+    }
+</style>
+
+<div class="smtp-wrap">
+    <h1 class="smtp-title">Cấu hình gửi mail (SMTP)</h1>
+    <p class="smtp-subtitle">
+        Thiết lập máy chủ SMTP để hệ thống gửi email thông báo. Bạn có thể lưu thông tin và gửi thư thử để kiểm tra.
+    </p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="smtp-alert smtp-alert--ok">@Model.StatusMessage</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="smtp-alert smtp-alert--err">@Model.ErrorMessage</div>
+    }
+
+    <form asp-action="Save" method="post" class="smtp-card">
+        @Html.AntiForgeryToken()
+        <h2>Thông tin máy chủ SMTP</h2>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="ModelOnly" class="smtp-validation"></div>
+        }
+
+        <div class="smtp-grid">
+            <div class="smtp-field">
+                <label asp-for="Configuration.Host"></label>
+                <input asp-for="Configuration.Host" class="smtp-input" />
+                <span asp-validation-for="Configuration.Host" class="text-danger"></span>
+            </div>
+            <div class="smtp-field">
+                <label asp-for="Configuration.Port"></label>
+                <input asp-for="Configuration.Port" class="smtp-input" type="number" min="1" max="65535" />
+                <span asp-validation-for="Configuration.Port" class="text-danger"></span>
+            </div>
+            <div class="smtp-field">
+                <label asp-for="Configuration.FromAddress"></label>
+                <input asp-for="Configuration.FromAddress" class="smtp-input" type="email" />
+                <span asp-validation-for="Configuration.FromAddress" class="text-danger"></span>
+            </div>
+            <div class="smtp-field">
+                <label asp-for="Configuration.FromName"></label>
+                <input asp-for="Configuration.FromName" class="smtp-input" />
+                <span asp-validation-for="Configuration.FromName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="smtp-checkbox-group" style="margin-top: 16px;">
+            <div class="smtp-checkbox">
+                <input asp-for="Configuration.UseSsl" type="checkbox" id="use-ssl" />
+                <label for="use-ssl">@Html.DisplayNameFor(m => m.Configuration.UseSsl)</label>
+            </div>
+            <div class="smtp-checkbox">
+                <input asp-for="Configuration.UseAuthentication" type="checkbox" id="use-auth" />
+                <label for="use-auth">@Html.DisplayNameFor(m => m.Configuration.UseAuthentication)</label>
+            </div>
+        </div>
+
+        <div class="smtp-grid" style="margin-top: 18px;">
+            <div class="smtp-field">
+                <label asp-for="Configuration.UserName"></label>
+                <input asp-for="Configuration.UserName" class="smtp-input" />
+                <span asp-validation-for="Configuration.UserName" class="text-danger"></span>
+            </div>
+            <div class="smtp-field">
+                <label asp-for="Configuration.Password"></label>
+                <input asp-for="Configuration.Password" class="smtp-input" type="password" autocomplete="new-password" />
+                <span asp-validation-for="Configuration.Password" class="text-danger"></span>
+                @if (Model.HasExistingPassword)
+                {
+                    <p class="smtp-hint">Để trống nếu muốn giữ lại mật khẩu hiện tại.</p>
+                }
+            </div>
+        </div>
+
+        <div class="smtp-field" style="margin-top: 18px;">
+            <label asp-for="Configuration.Notes"></label>
+            <textarea asp-for="Configuration.Notes" class="smtp-textarea"></textarea>
+            <span asp-validation-for="Configuration.Notes" class="text-danger"></span>
+        </div>
+
+        <div class="smtp-actions">
+            <button type="submit" class="btn btn-primary">Lưu cấu hình</button>
+        </div>
+    </form>
+
+    <form asp-action="SendTest" method="post" class="smtp-card">
+        @Html.AntiForgeryToken()
+        <h2>Gửi thư thử nghiệm</h2>
+        <p class="smtp-hint" style="margin-bottom: 14px;">Thư thử sẽ sử dụng cấu hình đã lưu ở trên.</p>
+
+        <div class="smtp-grid smtp-grid--single">
+            <div class="smtp-field">
+                <label asp-for="TestRecipient"></label>
+                <input asp-for="TestRecipient" class="smtp-input" type="email" />
+                <span asp-validation-for="TestRecipient" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="smtp-grid smtp-grid--single" style="margin-top: 16px;">
+            <div class="smtp-field">
+                <label asp-for="TestSubject"></label>
+                <input asp-for="TestSubject" class="smtp-input" />
+                <span asp-validation-for="TestSubject" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="smtp-field" style="margin-top: 16px;">
+            <label asp-for="TestBody"></label>
+            <textarea asp-for="TestBody" class="smtp-textarea"></textarea>
+            <span asp-validation-for="TestBody" class="text-danger"></span>
+        </div>
+
+        <div class="smtp-actions">
+            <button type="submit" class="btn btn-primary">Gửi thư thử</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
