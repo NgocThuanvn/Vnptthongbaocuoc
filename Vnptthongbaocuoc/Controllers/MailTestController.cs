@@ -1,5 +1,6 @@
-using System.Security.Authentication;
 using MailKit.Security;
+using MailKitAuthenticationException = MailKit.Security.AuthenticationException;
+using SystemAuthenticationException = System.Security.Authentication.AuthenticationException;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -104,7 +105,9 @@ public class MailTestController : Controller
 
     private static string GetFriendlyErrorMessage(Exception exception)
     {
-        if (exception is SslHandshakeException || exception is AuthenticationException)
+        if (exception is SslHandshakeException
+            || exception is MailKitAuthenticationException
+            || exception is SystemAuthenticationException)
         {
             return "Không thể thiết lập kết nối bảo mật với máy chủ SMTP. Nếu đang sử dụng cổng 587, hãy cấu hình STARTTLS (không bật SSL trực tiếp) hoặc chuyển sang cổng 465.";
         }
