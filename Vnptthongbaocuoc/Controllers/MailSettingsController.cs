@@ -188,7 +188,7 @@ public class MailSettingsController : Controller
         }
 
         return RedirectToAction(nameof(Index));
-    }
+    } 
 
     private static string GetFriendlyErrorMessage(Exception exception)
     {
