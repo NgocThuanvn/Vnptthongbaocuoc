@@ -1,4 +1,5 @@
 @model Vnptthongbaocuoc.Models.Mail.MailSettingsViewModel
+@using Vnptthongbaocuoc.Models.Mail
 @{
     ViewData["Title"] = "Cấu hình gửi mail (SMTP)";
 }
@@ -163,15 +164,8 @@
         display: block;
     }
 
-    .smtp-checkbox-group {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     @@media (max-width: 900px) {
-        .smtp-grid,
-        .smtp-checkbox-group {
+        .smtp-grid {
             grid-template-columns: 1fr;
         }
 
@@ -234,14 +228,18 @@
             </div>
         </div>
 
-        <div class="smtp-checkbox-group" style="margin-top: 16px;">
-            <div class="smtp-checkbox">
-                <input asp-for="Configuration.UseSsl" type="checkbox" id="use-ssl" />
-                <label for="use-ssl">@Html.DisplayNameFor(m => m.Configuration.UseSsl)</label>
+        <div class="smtp-grid" style="margin-top: 16px;">
+            <div class="smtp-field">
+                <label asp-for="Configuration.EncryptionMode"></label>
+                <select asp-for="Configuration.EncryptionMode" class="smtp-input" asp-items="Html.GetEnumSelectList<SmtpEncryptionMode>()"></select>
+                <span asp-validation-for="Configuration.EncryptionMode" class="text-danger"></span>
+                <p class="smtp-hint">Chọn STARTTLS khi sử dụng cổng 587 của email.vnpt.vn; chọn SSL/TLS cho cổng 465.</p>
             </div>
-            <div class="smtp-checkbox">
-                <input asp-for="Configuration.UseAuthentication" type="checkbox" id="use-auth" />
-                <label for="use-auth">@Html.DisplayNameFor(m => m.Configuration.UseAuthentication)</label>
+            <div class="smtp-field">
+                <div class="smtp-checkbox">
+                    <input asp-for="Configuration.UseAuthentication" type="checkbox" id="use-auth" />
+                    <label for="use-auth">@Html.DisplayNameFor(m => m.Configuration.UseAuthentication)</label>
+                </div>
             </div>
         </div>
 

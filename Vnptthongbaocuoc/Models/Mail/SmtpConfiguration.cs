@@ -15,8 +15,8 @@ public class SmtpConfiguration
     [Display(Name = "Cổng")]
     public int Port { get; set; } = 587;
 
-    [Display(Name = "Sử dụng SSL/TLS")]
-    public bool UseSsl { get; set; } = false;
+    [Display(Name = "Phương thức mã hóa")]
+    public SmtpEncryptionMode EncryptionMode { get; set; } = SmtpEncryptionMode.StartTls;
 
     [Display(Name = "Yêu cầu đăng nhập")]
     public bool UseAuthentication { get; set; } = true;
@@ -50,7 +50,7 @@ public class SmtpConfiguration
         {
             Host = "email.vnpt.vn",
             Port = 587,
-            UseSsl = false,
+            EncryptionMode = SmtpEncryptionMode.StartTls,
             UseAuthentication = true,
             Notes = "Máy chủ email.vnpt.vn sử dụng cổng 587 với STARTTLS (không bật SSL trực tiếp)."
         };
