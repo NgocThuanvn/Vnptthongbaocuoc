@@ -4,8 +4,10 @@ using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Vnptthongbaocuoc.Models.Mail;
 using Vnptthongbaocuoc.Services;
+using Vnptthongbaocuoc.Data;
 
 namespace Vnptthongbaocuoc.Controllers
 {
@@ -15,15 +17,18 @@ namespace Vnptthongbaocuoc.Controllers
         private readonly IConfiguration _config;
         private readonly PdfExportService _pdfExportService;
         private readonly ISmtpEmailSender _smtpEmailSender;
+        private readonly ApplicationDbContext _dbContext;
 
         public PrintController(
             IConfiguration config,
             PdfExportService pdfExportService,
-            ISmtpEmailSender smtpEmailSender)
+            ISmtpEmailSender smtpEmailSender,
+            ApplicationDbContext dbContext)
         {
             _config = config;
             _pdfExportService = pdfExportService;
             _smtpEmailSender = smtpEmailSender;
+            _dbContext = dbContext;
         }
 
         // ===== ViewModels =====
@@ -103,14 +108,42 @@ namespace Vnptthongbaocuoc.Controllers
                 new EmailAttachment($"ThongBao_{model.File}.pdf", pdfBytes, "application/pdf")
             };
 
+            var senderEmail = await _dbContext.SmtpConfigurations
+                .AsNoTracking()
+                .Select(x => x.FromAddress)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var log = new MailLog
+            {
+                SenderEmail = senderEmail,
+                RecipientEmail = model.EmailKhachHang!,
+                SentAt = DateTime.Now,
+                Body = body,
+                Status = "Pending",
+                FileName = model.File
+            };
+
             try
             {
                 await _smtpEmailSender.SendEmailAsync(model.EmailKhachHang!, subject, body, attachments, cancellationToken);
                 TempData["MailSuccess"] = $"Đã gửi email đến {model.EmailKhachHang}.";
+                log.Status = "Success";
             }
             catch (Exception ex)
             {
                 TempData["MailError"] = "Gửi mail thất bại: " + ex.Message;
+                log.Status = "Failed";
+                log.ErrorMessage = ex.Message;
+            }
+
+            try
+            {
+                _dbContext.MailLogs.Add(log);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch
+            {
+                // Không ném ngoại lệ để tránh ảnh hưởng đến luồng gửi mail
             }
 
             return RedirectToAction(nameof(File), new { table, file });
