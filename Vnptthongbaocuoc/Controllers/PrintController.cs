@@ -34,6 +34,7 @@ namespace Vnptthongbaocuoc.Controllers
             public string? ChuKyNo { get; set; }
             public string? TenKhachHang { get; set; }
             public string? DiaChiKhachHang { get; set; }
+            public string? EmailKhachHang { get; set; }
             public long SoDong { get; set; }
             public decimal TongPT { get; set; }
             public List<PrintRow> Rows { get; set; } = new();

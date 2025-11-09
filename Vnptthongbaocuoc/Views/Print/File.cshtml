@@ -105,6 +105,7 @@
                asp-route-table="@Model.Table" asp-route-file="@Model.File">
                 Lưu PDF
             </a>
+            <button type="button" class="btn">Gửi mail</button>
             <a asp-controller="Details" asp-action="Index" asp-route-table="@Model.Table" class="btn btn">Quay lại danh sách</a>
         </div>
     </div>
@@ -118,11 +119,12 @@
             Số dòng: <strong>@Model.SoDong.ToString("N0")</strong> ·
             Tổng PT: <strong class="mono">@Math.Round(Model.TongPT).ToString("N0")</strong>
         </div>
-        <div class="meta">
-            Kính gửi: <strong>@Model.TenKhachHang</strong><br />
-            Địa chỉ: @Model.DiaChiKhachHang
+            <div class="meta">
+                Kính gửi: <strong>@Model.TenKhachHang</strong><br />
+                Địa chỉ: @Model.DiaChiKhachHang<br />
+                Email: @(string.IsNullOrWhiteSpace(Model.EmailKhachHang) ? "(chưa cung cấp)" : Model.EmailKhachHang)
+            </div>
         </div>
-    </div>
 
     <div class="card">
         <table class="tbl">
