@@ -61,6 +61,7 @@ SELECT
     MAX(CHUKYNO),
     MAX(TEN_TT),
     MAX(DIACHI_TT),
+    MAX(EMAIL),
     COUNT(1),
     COALESCE(SUM(TRY_CONVERT(DECIMAL(38,0), TIEN_PT)),0)
 FROM [dbo].[{table}] WHERE TEN_FILE=@f;";
@@ -74,8 +75,9 @@ FROM [dbo].[{table}] WHERE TEN_FILE=@f;";
                     model.ChuKyNo = rd.IsDBNull(0) ? null : rd.GetString(0);
                     model.TenKhachHang = rd.IsDBNull(1) ? null : rd.GetString(1);
                     model.DiaChiKhachHang = rd.IsDBNull(2) ? null : rd.GetString(2);
-                    model.SoDong = rd.IsDBNull(3) ? 0L : Convert.ToInt64(rd.GetValue(3));
-                    model.TongPT = rd.IsDBNull(4) ? 0M : Convert.ToDecimal(rd.GetValue(4));
+                    model.EmailKhachHang = rd.IsDBNull(3) ? null : rd.GetString(3);
+                    model.SoDong = rd.IsDBNull(4) ? 0L : Convert.ToInt64(rd.GetValue(4));
+                    model.TongPT = rd.IsDBNull(5) ? 0M : Convert.ToDecimal(rd.GetValue(5));
                 }
             }
 
