@@ -56,6 +56,11 @@ public class MailSettingsController : Controller
     {
         var existing = await _context.SmtpConfigurations.FirstOrDefaultAsync();
 
+        if (!Enum.IsDefined(typeof(SmtpEncryptionMode), model.Configuration.EncryptionMode))
+        {
+            ModelState.AddModelError("Configuration.EncryptionMode", "Phương thức mã hóa không hợp lệ.");
+        }
+
         if (model.Configuration.UseAuthentication && string.IsNullOrWhiteSpace(model.Configuration.UserName))
         {
             ModelState.AddModelError("Configuration.UserName", "Vui lòng nhập tên đăng nhập SMTP.");
@@ -91,7 +96,7 @@ public class MailSettingsController : Controller
             {
                 Host = model.Configuration.Host.Trim(),
                 Port = model.Configuration.Port,
-                UseSsl = model.Configuration.UseSsl,
+                EncryptionMode = model.Configuration.EncryptionMode,
                 UseAuthentication = model.Configuration.UseAuthentication,
                 UserName = model.Configuration.UserName?.Trim(),
                 Password = model.Configuration.UseAuthentication ? model.Configuration.Password : null,
@@ -106,7 +111,7 @@ public class MailSettingsController : Controller
         {
             existing.Host = model.Configuration.Host.Trim();
             existing.Port = model.Configuration.Port;
-            existing.UseSsl = model.Configuration.UseSsl;
+            existing.EncryptionMode = model.Configuration.EncryptionMode;
             existing.UseAuthentication = model.Configuration.UseAuthentication;
             existing.UserName = model.Configuration.UseAuthentication ? model.Configuration.UserName?.Trim() : null;
             existing.FromAddress = model.Configuration.FromAddress.Trim();

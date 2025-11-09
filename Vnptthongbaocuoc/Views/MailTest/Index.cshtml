@@ -1,4 +1,5 @@
 @model Vnptthongbaocuoc.Models.Mail.MailTestViewModel
+@using Vnptthongbaocuoc.Models.Mail
 @{
     ViewData["Title"] = ViewData["Title"] ?? "Gửi thư thử nghiệm";
 }
@@ -198,7 +199,13 @@
                 </li>
                 <li>
                     <strong>Bảo mật</strong>
-                    @(Model.Configuration.UseSsl ? "SSL/TLS" : "STARTTLS")
+                    @(Model.Configuration.EncryptionMode switch
+                    {
+                        SmtpEncryptionMode.None => "Không mã hóa",
+                        SmtpEncryptionMode.StartTls => "STARTTLS",
+                        SmtpEncryptionMode.SslTls => "SSL/TLS",
+                        _ => Model.Configuration.EncryptionMode.ToString()
+                    })
                 </li>
                 <li>
                     <strong>Xác thực</strong>
