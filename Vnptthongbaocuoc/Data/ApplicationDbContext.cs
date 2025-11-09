@@ -14,5 +14,6 @@ namespace Vnptthongbaocuoc.Data
         }
 
         public DbSet<SmtpConfiguration> SmtpConfigurations { get; set; } = default!;
+        public DbSet<MailLog> MailLogs { get; set; } = default!;
     }
 }
