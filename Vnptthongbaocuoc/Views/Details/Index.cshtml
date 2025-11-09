@@ -149,9 +149,48 @@
                 <input type="hidden" name="table" value="@Model.Table" />
                 <button type="submit" class="btn btn-success" id="download-selected-btn" disabled>Lưu file đã chọn</button>
             </form>
-            <button type="button" class="btn btn-outline-primary" id="send-email-btn">Gửi Email</button>
+            <form id="sendEmailForm" asp-action="SendEmails" asp-controller="Details" method="post" style="display:none;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="table" value="@Model.Table" />
+                <input type="hidden" name="q" value="@Model.Query" />
+                <div id="send-email-files"></div>
+            </form>
+            <button type="button" class="btn btn-outline-primary" id="send-email-btn" disabled>Gửi Email</button>
         </div>
     </div>
+
+    @{
+        var emailSummary = TempData["EmailSummary"] as string;
+        var emailMessagesList = new System.Collections.Generic.List<string>();
+        if (TempData["EmailMessages"] is string emailMessagesRaw && !string.IsNullOrWhiteSpace(emailMessagesRaw))
+        {
+            foreach (var line in emailMessagesRaw.Split('\n'))
+            {
+                var trimmed = line?.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                {
+                    emailMessagesList.Add(trimmed);
+                }
+            }
+        }
+    }
+
+    @if (!string.IsNullOrWhiteSpace(emailSummary))
+    {
+        <div class="alert alert-info">@emailSummary</div>
+    }
+
+    @if (emailMessagesList.Count > 0)
+    {
+        <div class="alert alert-secondary">
+            <ul class="mb-0">
+                @foreach (var msg in emailMessagesList)
+                {
+                    <li>@msg</li>
+                }
+            </ul>
+        </div>
+    }
 
     <div class="table-box">
         <table class="table align-middle">
@@ -217,25 +256,31 @@
 </div>
 
 <script>
-    function updateDownloadButton() {
-        const btn = document.getElementById('download-selected-btn');
-        if (!btn) return;
+    function updateSelectionActions() {
         const anyChecked = document.querySelectorAll('.row-chk:checked').length > 0;
-        btn.disabled = !anyChecked;
+        const downloadBtn = document.getElementById('download-selected-btn');
+        if (downloadBtn) {
+            downloadBtn.disabled = !anyChecked;
+        }
+
+        const sendEmailBtn = document.getElementById('send-email-btn');
+        if (sendEmailBtn) {
+            sendEmailBtn.disabled = !anyChecked;
+        }
     }
 
     function toggleAll(master) {
         const checks = document.querySelectorAll('.row-chk');
         checks.forEach(c => c.checked = master.checked);
-        updateDownloadButton();
+        updateSelectionActions();
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         const checks = document.querySelectorAll('.row-chk');
         checks.forEach(c => {
-            c.addEventListener('change', updateDownloadButton);
+            c.addEventListener('change', updateSelectionActions);
         });
-        updateDownloadButton();
+        updateSelectionActions();
 
         const form = document.getElementById('downloadSelectedForm');
         if (form) {
@@ -244,6 +289,30 @@
                     evt.preventDefault();
                     alert('Vui lòng chọn ít nhất một file để lưu.');
                 }
+            });
+        }
+
+        const sendEmailBtn = document.getElementById('send-email-btn');
+        const sendEmailForm = document.getElementById('sendEmailForm');
+        const sendEmailFilesContainer = document.getElementById('send-email-files');
+        if (sendEmailBtn && sendEmailForm && sendEmailFilesContainer) {
+            sendEmailBtn.addEventListener('click', function () {
+                const checked = document.querySelectorAll('.row-chk:checked');
+                if (checked.length === 0) {
+                    alert('Vui lòng chọn ít nhất một file để gửi email.');
+                    return;
+                }
+
+                sendEmailFilesContainer.innerHTML = '';
+                checked.forEach(function (chk) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'files';
+                    input.value = chk.value;
+                    sendEmailFilesContainer.appendChild(input);
+                });
+
+                sendEmailForm.submit();
             });
         }
     });
