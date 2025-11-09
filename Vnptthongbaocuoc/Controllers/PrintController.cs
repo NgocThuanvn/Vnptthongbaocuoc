@@ -102,10 +102,12 @@ namespace Vnptthongbaocuoc.Controllers
             var subject = "Thông báo và đề nghị thanh toán cước" +
                           (string.IsNullOrWhiteSpace(model.ChuKyNo) ? string.Empty : $" {model.ChuKyNo.Trim()}");
             var body = "Mail gửi tự động, vui lòng xem file đính kèm.";
+            var recipientEmail = model.EmailKhachHang!.Trim();
+            var attachmentFileName = $"ThongBao_{model.File}.pdf";
 
             var attachments = new[]
             {
-                new EmailAttachment($"ThongBao_{model.File}.pdf", pdfBytes, "application/pdf")
+                new EmailAttachment(attachmentFileName, pdfBytes, "application/pdf")
             };
 
             var senderEmail = await _dbContext.SmtpConfigurations
@@ -115,18 +117,18 @@ namespace Vnptthongbaocuoc.Controllers
 
             var log = new MailLog
             {
-                SenderEmail = senderEmail,
-                RecipientEmail = model.EmailKhachHang!,
+                SenderEmail = senderEmail?.Trim(),
+                RecipientEmail = recipientEmail,
                 SentAt = DateTime.Now,
                 Body = body,
                 Status = "Pending",
-                FileName = model.File
+                FileName = attachmentFileName
             };
 
             try
             {
-                await _smtpEmailSender.SendEmailAsync(model.EmailKhachHang!, subject, body, attachments, cancellationToken);
-                TempData["MailSuccess"] = $"Đã gửi email đến {model.EmailKhachHang}.";
+                await _smtpEmailSender.SendEmailAsync(recipientEmail, subject, body, attachments, cancellationToken);
+                TempData["MailSuccess"] = $"Đã gửi email đến {recipientEmail}.";
                 log.Status = "Success";
             }
             catch (Exception ex)
