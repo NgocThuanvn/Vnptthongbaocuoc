@@ -2,7 +2,6 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
-using MimeKit.Text;
 using Vnptthongbaocuoc.Data;
 using Vnptthongbaocuoc.Models.Mail;
 
@@ -10,7 +9,12 @@ namespace Vnptthongbaocuoc.Services;
 
 public interface ISmtpEmailSender
 {
-    Task SendEmailAsync(string toEmail, string subject, string htmlBody, CancellationToken cancellationToken = default);
+    Task SendEmailAsync(
+        string toEmail,
+        string subject,
+        string htmlBody,
+        IEnumerable<EmailAttachment>? attachments = null,
+        CancellationToken cancellationToken = default);
 }
 
 public class SmtpEmailSender(ApplicationDbContext context, ILogger<SmtpEmailSender> logger) : ISmtpEmailSender
@@ -18,7 +22,12 @@ public class SmtpEmailSender(ApplicationDbContext context, ILogger<SmtpEmailSend
     private readonly ApplicationDbContext _context = context;
     private readonly ILogger<SmtpEmailSender> _logger = logger;
 
-    public async Task SendEmailAsync(string toEmail, string subject, string htmlBody, CancellationToken cancellationToken = default)
+    public async Task SendEmailAsync(
+        string toEmail,
+        string subject,
+        string htmlBody,
+        IEnumerable<EmailAttachment>? attachments = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(toEmail);
         ArgumentException.ThrowIfNullOrWhiteSpace(subject);
@@ -42,10 +51,52 @@ public class SmtpEmailSender(ApplicationDbContext context, ILogger<SmtpEmailSend
         message.From.Add(new MailboxAddress(displayName, config.FromAddress));
         message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = subject;
-        message.Body = new TextPart(TextFormat.Html)
+
+        var bodyBuilder = new BodyBuilder
         {
-            Text = htmlBody
+            HtmlBody = htmlBody
         };
+
+        if (attachments is not null)
+        {
+            foreach (var attachment in attachments)
+            {
+                if (attachment is null)
+                {
+                    continue;
+                }
+
+                if (attachment.Content is null || attachment.Content.Length == 0)
+                {
+                    continue;
+                }
+
+                var fileName = string.IsNullOrWhiteSpace(attachment.FileName)
+                    ? "attachment"
+                    : attachment.FileName;
+
+                ContentType contentType;
+                if (!string.IsNullOrWhiteSpace(attachment.ContentType))
+                {
+                    try
+                    {
+                        contentType = ContentType.Parse(attachment.ContentType);
+                    }
+                    catch
+                    {
+                        contentType = new ContentType("application", "octet-stream");
+                    }
+                }
+                else
+                {
+                    contentType = new ContentType("application", "octet-stream");
+                }
+
+                bodyBuilder.Attachments.Add(fileName, attachment.Content, contentType);
+            }
+        }
+
+        message.Body = bodyBuilder.ToMessageBody();
 
         using var client = new SmtpClient();
         try

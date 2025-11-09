@@ -1,7 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Vnptthongbaocuoc.Models.Mail;
+using Vnptthongbaocuoc.Services;
 
 namespace Vnptthongbaocuoc.Controllers
 {
@@ -9,7 +13,18 @@ namespace Vnptthongbaocuoc.Controllers
     public class PrintController : Controller
     {
         private readonly IConfiguration _config;
-        public PrintController(IConfiguration config) => _config = config;
+        private readonly PdfExportService _pdfExportService;
+        private readonly ISmtpEmailSender _smtpEmailSender;
+
+        public PrintController(
+            IConfiguration config,
+            PdfExportService pdfExportService,
+            ISmtpEmailSender smtpEmailSender)
+        {
+            _config = config;
+            _pdfExportService = pdfExportService;
+            _smtpEmailSender = smtpEmailSender;
+        }
 
         // ===== ViewModels =====
         public sealed class PrintRow
@@ -42,20 +57,74 @@ namespace Vnptthongbaocuoc.Controllers
 
         // GET /Print/File?table=Vnpt_xxx&file=BANGKE001
         [HttpGet]
-        public async Task<IActionResult> File(string table, string file)
+        public async Task<IActionResult> File(string table, string file, CancellationToken cancellationToken)
         {
             if (!IsSafeImportTableName(table))
                 return BadRequest("Tên bảng không hợp lệ (yêu cầu Vnpt_...).");
             if (string.IsNullOrWhiteSpace(file))
                 return BadRequest("Thiếu tham số TEN_FILE.");
 
+            var model = await LoadPrintPageModelAsync(table, file, cancellationToken);
+
+            return View(model); // Views/Print/File.cshtml
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendMail(string table, string file, CancellationToken cancellationToken)
+        {
+            if (!IsSafeImportTableName(table) || string.IsNullOrWhiteSpace(file))
+            {
+                TempData["MailError"] = "Tham số gửi mail không hợp lệ.";
+                return RedirectToAction(nameof(File), new { table, file });
+            }
+
+            var model = await LoadPrintPageModelAsync(table, file, cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(model.EmailKhachHang))
+            {
+                TempData["MailError"] = "Khách hàng chưa cung cấp email, không thể gửi thông báo.";
+                return RedirectToAction(nameof(File), new { table, file });
+            }
+
+            var pdfBytes = await _pdfExportService.GeneratePdfAsync(table, file);
+            if (pdfBytes is null || pdfBytes.Length == 0)
+            {
+                TempData["MailError"] = "Không thể tạo file PDF đính kèm.";
+                return RedirectToAction(nameof(File), new { table, file });
+            }
+
+            var subject = "Thông báo và đề nghị thanh toán cước" +
+                          (string.IsNullOrWhiteSpace(model.ChuKyNo) ? string.Empty : $" {model.ChuKyNo.Trim()}");
+            var body = "Mail gửi tự động, vui lòng xem file đính kèm.";
+
+            var attachments = new[]
+            {
+                new EmailAttachment($"ThongBao_{model.File}.pdf", pdfBytes, "application/pdf")
+            };
+
+            try
+            {
+                await _smtpEmailSender.SendEmailAsync(model.EmailKhachHang!, subject, body, attachments, cancellationToken);
+                TempData["MailSuccess"] = $"Đã gửi email đến {model.EmailKhachHang}.";
+            }
+            catch (Exception ex)
+            {
+                TempData["MailError"] = "Gửi mail thất bại: " + ex.Message;
+            }
+
+            return RedirectToAction(nameof(File), new { table, file });
+        }
+
+        // Validate tên bảng import an toàn
+        private async Task<PrintPageModel> LoadPrintPageModelAsync(string table, string file, CancellationToken cancellationToken)
+        {
             var cnnStr = _config.GetConnectionString("DefaultConnection");
             var model = new PrintPageModel { Table = table, File = file };
 
-            using var cnn = new SqlConnection(cnnStr);
-            await cnn.OpenAsync();
+            await using var cnn = new SqlConnection(cnnStr);
+            await cnn.OpenAsync(cancellationToken);
 
-            // Header: lấy đại diện thông tin KH + tổng PT + số dòng
             var sqlHeader = $@"
 SELECT
     MAX(CHUKYNO),
@@ -66,11 +135,11 @@ SELECT
     COALESCE(SUM(TRY_CONVERT(DECIMAL(38,0), TIEN_PT)),0)
 FROM [dbo].[{table}] WHERE TEN_FILE=@f;";
 
-            using (var cmd = new SqlCommand(sqlHeader, cnn))
+            await using (var cmd = new SqlCommand(sqlHeader, cnn))
             {
                 cmd.Parameters.AddWithValue("@f", file);
-                using var rd = await cmd.ExecuteReaderAsync();
-                if (await rd.ReadAsync())
+                await using var rd = await cmd.ExecuteReaderAsync(cancellationToken);
+                if (await rd.ReadAsync(cancellationToken))
                 {
                     model.ChuKyNo = rd.IsDBNull(0) ? null : rd.GetString(0);
                     model.TenKhachHang = rd.IsDBNull(1) ? null : rd.GetString(1);
@@ -81,7 +150,6 @@ FROM [dbo].[{table}] WHERE TEN_FILE=@f;";
                 }
             }
 
-            // Body: toàn bộ dòng thuộc TEN_FILE
             var sqlRows = $@"
 SELECT
     MA_TT, ACCOUNT, TEN_TT, DIACHI_TT, DCLAPDAT,
@@ -94,11 +162,11 @@ FROM [dbo].[{table}]
 WHERE TEN_FILE=@f
 ORDER BY MA_TT, ACCOUNT;";
 
-            using (var cmd = new SqlCommand(sqlRows, cnn))
+            await using (var cmd = new SqlCommand(sqlRows, cnn))
             {
                 cmd.Parameters.AddWithValue("@f", file);
-                using var rd = await cmd.ExecuteReaderAsync();
-                while (await rd.ReadAsync())
+                await using var rd = await cmd.ExecuteReaderAsync(cancellationToken);
+                while (await rd.ReadAsync(cancellationToken))
                 {
                     model.Rows.Add(new PrintRow
                     {
@@ -117,10 +185,9 @@ ORDER BY MA_TT, ACCOUNT;";
                 }
             }
 
-            return View(model); // Views/Print/File.cshtml
+            return model;
         }
 
-        // Validate tên bảng import an toàn
         private static bool IsSafeImportTableName(string table)
         {
             if (string.IsNullOrWhiteSpace(table)) return false;
