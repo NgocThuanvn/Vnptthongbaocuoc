@@ -50,7 +50,7 @@ public class SmtpEmailSender(ApplicationDbContext context, ILogger<SmtpEmailSend
         using var client = new SmtpClient();
         try
         {
-            var secureSocket = config.UseSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable;
+            var secureSocket = config.UseSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
             await client.ConnectAsync(config.Host, config.Port, secureSocket, cancellationToken);
 
             if (config.UseAuthentication)

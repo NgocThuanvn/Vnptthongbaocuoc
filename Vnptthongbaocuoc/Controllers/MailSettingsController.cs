@@ -30,7 +30,7 @@ public class MailSettingsController : Controller
     public async Task<IActionResult> Index()
     {
         var configuration = await _context.SmtpConfigurations.AsNoTracking().FirstOrDefaultAsync()
-            ?? new SmtpConfiguration();
+            ?? SmtpConfiguration.CreateDefault();
 
         var viewModel = new MailSettingsViewModel
         {
@@ -148,7 +148,7 @@ public class MailSettingsController : Controller
 
         if (!ModelState.IsValid)
         {
-            var fallback = configuration ?? new SmtpConfiguration();
+            var fallback = configuration ?? SmtpConfiguration.CreateDefault();
             var viewModel = new MailSettingsViewModel
             {
                 Configuration = fallback,
