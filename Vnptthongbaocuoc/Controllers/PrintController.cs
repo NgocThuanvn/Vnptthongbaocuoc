@@ -101,7 +101,7 @@ namespace Vnptthongbaocuoc.Controllers
 
             var subject = "Thông báo và đề nghị thanh toán cước" +
                           (string.IsNullOrWhiteSpace(model.ChuKyNo) ? string.Empty : $" {model.ChuKyNo.Trim()}");
-            var body = "Mail gửi tự động, vui lòng xem file đính kèm.";
+            var body = "Mail gửi tự động, vui lòng xem file đính kèm.\n Thông tin";
             var recipientEmail = model.EmailKhachHang!.Trim();
             var attachmentFileName = $"ThongBao_{model.File}.pdf";
 
