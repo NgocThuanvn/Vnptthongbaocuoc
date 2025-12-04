@@ -38,6 +38,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<PdfExportService>();
+builder.Services.AddScoped<PdfExportServiceUNT>();
 builder.Services.AddScoped<ISmtpEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
