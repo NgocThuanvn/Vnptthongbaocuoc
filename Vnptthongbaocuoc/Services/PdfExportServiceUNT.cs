@@ -9,12 +9,12 @@ using QuestPDF.Infrastructure;
 
 namespace Vnptthongbaocuoc.Services
 {
-    public class PdfExportService
+    public class PdfExportServiceUNT
     {
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
 
-        public PdfExportService(IConfiguration config, IWebHostEnvironment env)
+        public PdfExportServiceUNT(IConfiguration config, IWebHostEnvironment env)
         {
             _config = config;
             _env = env;
