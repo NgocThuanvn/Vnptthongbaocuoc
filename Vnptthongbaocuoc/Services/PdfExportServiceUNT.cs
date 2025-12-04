@@ -266,13 +266,13 @@ WHERE TEN_FILE = @file;
 
                         // Hàng 2: Tiêu đề thông báo
                         h.Item().PaddingTop(8)
-                            .Text("THÔNG BÁO VÀ ĐỀ NGHỊ THANH TOÁN CƯỚC DỊCH VỤ VIỄN THÔNG")
+                            .Text($"THÔNG BÁO CƯỚC DỊCH VỤ VIỄN THÔNG {m.ChuKyNo})")
                             .SemiBold().FontSize(13).AlignCenter();
 
-                        // Hàng 3: dòng phụ
-                        h.Item().Text($"(V/v tiền cước sử dụng dịch vụ VT-CNTT: {m.ChuKyNo})")
-                            .FontSize(9).AlignCenter();
-                        // Hàng 3: dòng phụ
+                        //// Hàng 3: dòng phụ
+                        //h.Item().Text($"KỲ CƯỚC: {m.ChuKyNo}")
+                        //    .FontSize(9).AlignCenter();
+                        //// Hàng 3: dòng phụ
                         h.Item().Text("")
                             .FontSize(9).AlignCenter();
                     });
@@ -280,24 +280,7 @@ WHERE TEN_FILE = @file;
                     // ========= CONTENT =========
                     page.Content().Column(col =>
                     {
-                        col.Spacing(1);
-                        col.Item().Text(t =>
-                        {
-                            t.Span("VNPT Sóc Trăng xin thông báo đến quý khách hàng tiền cước các dịch vụ VT-CNTT quý khách  đã sử dụng cụ thể như sau:")
-                            .SemiBold().FontSize(10);
-                        });
-
-                        col.Item().Text(t =>
-                        {
-                            t.Span(" -Kính gửi: ").SemiBold().FontSize(10);
-                            t.Span(m.TenKhachHang).SemiBold().FontSize(10);
-                        });
-
-                        col.Item().Text(t =>
-                        {
-                            t.Span(" -Địa chỉ: ").SemiBold().FontSize(10);
-                            t.Span(m.DiaChiKhachHang).SemiBold().FontSize(10);
-                        });
+                       
                         // Bảng chi tiết (cột chữ canh giữa, tiền PT canh phải)
 
                         col.Item()
@@ -381,23 +364,11 @@ WHERE TEN_FILE = @file;
 
                         //col.Item().PageBreak();
 
-                        col.Item().PaddingTop(0).Text(t =>
-                        {
-                            var hanThanhToan = FormatEightDigitDate(m.ThoiHanThanhToan);
-                            var hanThanhToanText = string.IsNullOrEmpty(hanThanhToan) ? m.ThoiHanThanhToan : hanThanhToan;
-                            t.Line($"Kính đề nghị quý khách hàng vui lòng chuyển khoản thanh toán trước ngày {hanThanhToanText}");
-                            t.Line("- Tên tài khoản:  VIỄN THÔNG CẦN THƠ - TẬP ĐOÀN BƯU CHÍNH VIỄN THÔNG VIỆT NAM (CHI NHÁNH CTY TNHH)");
-                            t.Line("- Số tài khoản: 7600201.009180 - Tại : Ngân Hàng Nông Nghiệp và PTNT Việt Nam - CN  Sóc Trăng");
-                            t.Line("- Địa chỉ: 11 Phan Đình Phùng, Phường Ninh Kiều, Thành Phố Cần Thơ");
-                            t.Line($"- Nội dung: {m.TenKhachHang} thanh toán cước DVVT");
-                            t.Line("Rất mong sự hỗ trợ của quý khách hàng, nhằm giúp chúng tôi hoàn thành nhiệm vụ được giao.");
-                            t.Line("Trân trọng kính chào!");
-                        });
 
                         // chữ ký
                         col.Item().Row(r =>
                         {
-                            r.RelativeItem().Text("Người nhận\n(Ký & ghi rõ họ tên)").AlignCenter();
+                            r.RelativeItem().Text("").AlignCenter();
                             r.RelativeItem().Column(c2 =>
                             {
                                 var (ngay, thang, nam) = GetEightDigitDateParts(m.NgayInFile);
