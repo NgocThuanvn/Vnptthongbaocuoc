@@ -111,6 +111,11 @@
            asp-route-table="@Model.Table" asp-route-file="@Model.File">
             Lưu PDF
         </a>
+        <a class="btn"
+           asp-controller="Pdf" asp-action="FromFileUnt"
+           asp-route-table="@Model.Table" asp-route-file="@Model.File">
+            Lưu UNT
+        </a>
         <form asp-action="SendMail" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" name="table" value="@Model.Table" />
