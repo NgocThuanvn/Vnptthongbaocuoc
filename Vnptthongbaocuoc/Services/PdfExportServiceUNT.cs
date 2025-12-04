@@ -217,7 +217,7 @@ WHERE TEN_FILE = @file;
 
                         // Hàng 2: Tiêu đề thông báo
                         h.Item().PaddingTop(8)
-                            .Text($"THÔNG BÁO CƯỚC DỊCH VỤ VIỄN THÔNG {m.ChuKyNo})")
+                            .Text($"THÔNG BÁO CƯỚC DỊCH VỤ VIỄN THÔNG {m.ChuKyNo}")
                             .SemiBold().FontSize(13).AlignCenter();
 
                         //// Hàng 3: dòng phụ
