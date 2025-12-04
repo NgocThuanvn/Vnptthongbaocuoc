@@ -149,6 +149,12 @@
                 <input type="hidden" name="table" value="@Model.Table" />
                 <button type="submit" class="btn btn-success" id="download-selected-btn" disabled>Lưu file đã chọn</button>
             </form>
+            <form id="downloadSelectedUntForm" asp-action="DownloadSelectedUnt" asp-controller="Details" method="post" style="display:none;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="table" value="@Model.Table" />
+                <div id="download-unt-files"></div>
+            </form>
+            <button type="button" class="btn btn-secondary" id="download-selected-unt-btn" disabled>Lưu UNT đã chọn</button>
             <form id="sendEmailForm" asp-action="SendEmails" asp-controller="Details" method="post" style="display:none;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="table" value="@Model.Table" />
@@ -263,6 +269,11 @@
             downloadBtn.disabled = !anyChecked;
         }
 
+        const downloadUntBtn = document.getElementById('download-selected-unt-btn');
+        if (downloadUntBtn) {
+            downloadUntBtn.disabled = !anyChecked;
+        }
+
         const sendEmailBtn = document.getElementById('send-email-btn');
         if (sendEmailBtn) {
             sendEmailBtn.disabled = !anyChecked;
@@ -289,6 +300,30 @@
                     evt.preventDefault();
                     alert('Vui lòng chọn ít nhất một file để lưu.');
                 }
+            });
+        }
+
+        const downloadUntBtn = document.getElementById('download-selected-unt-btn');
+        const downloadUntForm = document.getElementById('downloadSelectedUntForm');
+        const downloadUntFiles = document.getElementById('download-unt-files');
+        if (downloadUntBtn && downloadUntForm && downloadUntFiles) {
+            downloadUntBtn.addEventListener('click', function () {
+                const checked = document.querySelectorAll('.row-chk:checked');
+                if (checked.length === 0) {
+                    alert('Vui lòng chọn ít nhất một file để lưu.');
+                    return;
+                }
+
+                downloadUntFiles.innerHTML = '';
+                checked.forEach(function (chk) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'files';
+                    input.value = chk.value;
+                    downloadUntFiles.appendChild(input);
+                });
+
+                downloadUntForm.submit();
             });
         }
 
