@@ -38,12 +38,8 @@ namespace Vnptthongbaocuoc.Services
             public string TEN_TT { get; set; } = string.Empty;
             public string DIACHI_TT { get; set; } = string.Empty;
             public string DCLAPDAT { get; set; } = string.Empty;
-            public decimal TIEN_TTHUE { get; set; }
-            public decimal THUE { get; set; }
             public decimal TIEN_PT { get; set; }
-            public string SOHD { get; set; } = string.Empty;
-            public string NGAY_IN { get; set; } = string.Empty;
-            public string MA_TRACUUHD { get; set; } = string.Empty;
+            public string GHI_CHU { get; set; } = string.Empty;
         }
 
         private sealed class PdfModel
@@ -56,8 +52,6 @@ namespace Vnptthongbaocuoc.Services
             public string NgayInFile { get; set; } = string.Empty;
             public string ThoiHanThanhToan { get; set; } = string.Empty;
             public int SoDong { get; set; }
-            public decimal TongTienTruocThue { get; set; }
-            public decimal TongTienThue { get; set; }
             public decimal TongPT { get; set; }
             public List<PdfRow> Rows { get; set; } = new();
         }
@@ -69,10 +63,7 @@ namespace Vnptthongbaocuoc.Services
 
             var sql = $@"
 SELECT MA_TT, ACCOUNT, TEN_TT, DIACHI_TT, DCLAPDAT,
-       TRY_CONVERT(DECIMAL(18,0), TIEN_TTHUE) AS TIEN_TTHUE,
-       TRY_CONVERT(DECIMAL(18,0), THUE) AS THUE,
-       TRY_CONVERT(DECIMAL(18,0), TIEN_PT) AS TIEN_PT,
-       SOHD, NGAY_IN, MA_TRACUUHD
+       TRY_CONVERT(DECIMAL(18,0), TIEN_PT) AS TIEN_PT
 FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file
 ORDER BY TEN_TT, ACCOUNT;
@@ -82,8 +73,6 @@ FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file;
 
 SELECT COUNT(*) AS [RowCount],
-       SUM(TRY_CONVERT(DECIMAL(18,0), TIEN_TTHUE)) AS [SumTienTruocThue],
-       SUM(TRY_CONVERT(DECIMAL(18,0), THUE)) AS [SumTienThue],
        SUM(TRY_CONVERT(DECIMAL(18,0), TIEN_PT)) AS [SumPT]
 FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file;
@@ -99,8 +88,6 @@ WHERE TEN_FILE = @file;
 
             while (await rd.ReadAsync())
             {
-                var ngayIn = FormatNgayIn(rd["NGAY_IN"]);
-
                 model.Rows.Add(new PdfRow
                 {
                     MA_TT = rd["MA_TT"]?.ToString() ?? string.Empty,
@@ -108,12 +95,7 @@ WHERE TEN_FILE = @file;
                     TEN_TT = rd["TEN_TT"]?.ToString() ?? string.Empty,
                     DIACHI_TT = rd["DIACHI_TT"]?.ToString() ?? string.Empty,
                     DCLAPDAT = rd["DCLAPDAT"]?.ToString() ?? string.Empty,
-                    TIEN_TTHUE = rd["TIEN_TTHUE"] is DBNull ? 0 : (decimal)rd["TIEN_TTHUE"],
-                    THUE = rd["THUE"] is DBNull ? 0 : (decimal)rd["THUE"],
-                    TIEN_PT = rd["TIEN_PT"] is DBNull ? 0 : (decimal)rd["TIEN_PT"],
-                    SOHD = rd["SOHD"]?.ToString() ?? string.Empty,
-                    NGAY_IN = ngayIn,
-                    MA_TRACUUHD = rd["MA_TRACUUHD"]?.ToString() ?? string.Empty
+                    TIEN_PT = rd["TIEN_PT"] is DBNull ? 0 : (decimal)rd["TIEN_PT"]
                 });
             }
 
@@ -129,41 +111,10 @@ WHERE TEN_FILE = @file;
             if (await rd.NextResultAsync() && await rd.ReadAsync())
             {
                 model.SoDong = rd["RowCount"] is DBNull ? 0 : Convert.ToInt32(rd["RowCount"]);
-                model.TongTienTruocThue = rd["SumTienTruocThue"] is DBNull ? 0 : Convert.ToDecimal(rd["SumTienTruocThue"]);
-                model.TongTienThue = rd["SumTienThue"] is DBNull ? 0 : Convert.ToDecimal(rd["SumTienThue"]);
                 model.TongPT = rd["SumPT"] is DBNull ? 0 : Convert.ToDecimal(rd["SumPT"]);
             }
 
             return model;
-        }
-
-        private static string FormatNgayIn(object? value)
-        {
-            if (value is null || value == DBNull.Value)
-            {
-                return string.Empty;
-            }
-
-            if (value is DateTime ngayInDateTime)
-            {
-                return ngayInDateTime.ToString("dd/MM/yyyy");
-            }
-
-            var ngayInString = value.ToString()?.Trim();
-            if (string.IsNullOrWhiteSpace(ngayInString))
-            {
-                return string.Empty;
-            }
-
-            if (ngayInString.Length >= 8)
-            {
-                var dd = ngayInString.Substring(0, 2);
-                var mm = ngayInString.Substring(2, 2);
-                var yyyy = ngayInString.Substring(4, 4);
-                return $"{dd}/{mm}/{yyyy}";
-            }
-
-            return ngayInString;
         }
 
         private static string FormatEightDigitDate(string? value)
@@ -280,81 +231,66 @@ WHERE TEN_FILE = @file;
                     // ========= CONTENT =========
                     page.Content().Column(col =>
                     {
-                       
                         // Bảng chi tiết (cột chữ canh giữa, tiền PT canh phải)
 
                         col.Item()
-   .Element(e => e.DefaultTextStyle(t => t
-       .FontFamily("Times New Roman")
-       .FontSize(9)))   // áp dụng font 10 cho toàn bảng
-   .Table(table =>
-   {
-       table.ColumnsDefinition(cols =>
-       {
-           cols.ConstantColumn(30);
-           cols.ConstantColumn(80);
-           cols.ConstantColumn(85);
-           cols.RelativeColumn(6);
-           cols.ConstantColumn(60);
-           cols.ConstantColumn(60);
-           cols.ConstantColumn(60);
-           cols.ConstantColumn(60);
-           cols.ConstantColumn(60);
-           cols.ConstantColumn(95);
-       });
+                            .Element(e => e.DefaultTextStyle(t => t
+                                .FontFamily("Times New Roman")
+                                .FontSize(9)))   // áp dụng font 10 cho toàn bảng
+                            .Table(table =>
+                            {
+                                table.ColumnsDefinition(cols =>
+                                {
+                                    cols.ConstantColumn(30);
+                                    cols.ConstantColumn(80);
+                                    cols.ConstantColumn(85);
+                                    cols.RelativeColumn(6);
+                                    cols.ConstantColumn(80);
+                                    cols.RelativeColumn(4);
+                                });
 
-       table.Header(h =>
-       {
-           h.Cell().Element(CellHeaderCenter).Text("Stt");
-           h.Cell().Element(CellHeaderCenter).Text("Mã TT");
-           h.Cell().Element(CellHeaderCenter).Text("Account");
-           h.Cell().Element(CellHeaderCenter).Text("Tên Khách hàng");
-           h.Cell().Element(CellHeaderCenter).Text("Tiền T.Thuế");
-           h.Cell().Element(CellHeaderCenter).Text("Tiền thuế");
-           h.Cell().Element(CellHeaderCenter).Text("Tiền PT");
-           h.Cell().Element(CellHeaderCenter).Text("Số HĐ");
-           h.Cell().Element(CellHeaderCenter).Text("Ngày In");
-           h.Cell().Element(CellHeaderCenter).Text("Mã tra cứu HD");
-       });
+                                table.Header(h =>
+                                {
+                                    h.Cell().Element(CellHeaderCenter).Text("Stt");
+                                    h.Cell().Element(CellHeaderCenter).Text("Mã TT");
+                                    h.Cell().Element(CellHeaderCenter).Text("Account");
+                                    h.Cell().Element(CellHeaderCenter).Text("Tên Khách hàng");
+                                    h.Cell().Element(CellHeaderCenter).Text("Tiền PT");
+                                    h.Cell().Element(CellHeaderCenter).Text("Ghi chú");
+                                });
 
-       var i = 0;
-       foreach (var r in m.Rows)
-       {
-           i++;
-           table.Cell().Element(CellCenter).Text(i.ToString());
-           table.Cell().Element(CellCenter).Text(r.MA_TT);
-           table.Cell().Element(CellCenter).Text(r.ACCOUNT);
-           table.Cell().Element(CellLeft).Text(string.IsNullOrWhiteSpace(r.DCLAPDAT) ? r.TEN_TT : r.DCLAPDAT);
-           table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_TTHUE));
-           table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.THUE));
-           table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_PT));
-           table.Cell().Element(CellCenter).Text(r.SOHD);
-           table.Cell().Element(CellCenter).Text(r.NGAY_IN);
-           table.Cell().Element(CellCenter).Text(r.MA_TRACUUHD);
-       }
+                                var i = 0;
+                                foreach (var r in m.Rows)
+                                {
+                                    i++;
+                                    table.Cell().Element(CellCenter).Text(i.ToString());
+                                    table.Cell().Element(CellCenter).Text(r.MA_TT);
+                                    table.Cell().Element(CellCenter).Text(r.ACCOUNT);
+                                    table.Cell().Element(CellLeft).Text(string.IsNullOrWhiteSpace(r.DCLAPDAT) ? r.TEN_TT : r.DCLAPDAT);
+                                    table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_PT));
+                                    table.Cell().Element(CellLeft).Text(r.GHI_CHU);
+                                }
 
-       table.Cell().ColumnSpan(4).Element(CellTotalRight).Text("Tổng cộng:");
-       table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienTruocThue));
-       table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongTienThue));
-       table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
-       table.Cell().ColumnSpan(3).Element(CellTotalRight).Text("");
+                                table.Cell().ColumnSpan(4).Element(CellTotalRight).Text("Tổng cộng:");
+                                table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
+                                table.Cell().Element(CellTotalRight).Text("");
 
-       // styles
-       static IContainer CellHeaderCenter(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
-           .Padding(4).AlignCenter().DefaultTextStyle(x => x
-               .FontFamily("Times New Roman")
-               .SemiBold());
-       static IContainer CellHeaderRight(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
-           .Padding(4).AlignRight().DefaultTextStyle(x => x
-               .FontFamily("Times New Roman")
-               .SemiBold());
-       static IContainer CellCenter(IContainer c) => c.Border(0.5f).Padding(3).AlignCenter();
-       static IContainer CellRight(IContainer c) => c.Border(0.5f).Padding(3).AlignRight();
-       static IContainer CellTotalRight(IContainer c) => c.Border(0.5f).Padding(4).AlignRight().DefaultTextStyle(x => x
-           .FontFamily("Times New Roman")
-           .SemiBold());
-       static IContainer CellLeft(IContainer c) => c.Border(0.5f).Padding(3).AlignLeft();
-   });
+                                // styles
+                                static IContainer CellHeaderCenter(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
+                                    .Padding(4).AlignCenter().DefaultTextStyle(x => x
+                                        .FontFamily("Times New Roman")
+                                        .SemiBold());
+                                static IContainer CellHeaderRight(IContainer c) => c.Border(0.5f).Background(Colors.Grey.Lighten3)
+                                    .Padding(4).AlignRight().DefaultTextStyle(x => x
+                                        .FontFamily("Times New Roman")
+                                        .SemiBold());
+                                static IContainer CellCenter(IContainer c) => c.Border(0.5f).Padding(3).AlignCenter();
+                                static IContainer CellRight(IContainer c) => c.Border(0.5f).Padding(3).AlignRight();
+                                static IContainer CellTotalRight(IContainer c) => c.Border(0.5f).Padding(4).AlignRight().DefaultTextStyle(x => x
+                                    .FontFamily("Times New Roman")
+                                    .SemiBold());
+                                static IContainer CellLeft(IContainer c) => c.Border(0.5f).Padding(3).AlignLeft();
+                            });
 
                      
                         col.Item().PaddingTop(0).Text(t =>
