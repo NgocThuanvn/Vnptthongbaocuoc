@@ -1,6 +1,7 @@
 ﻿@model Vnptthongbaocuoc.Controllers.DetailsController.DetailsPageModel
 @{
     ViewData["Title"] = "Chi tiết bảng " + Model.Table;
+    var moneyCulture = new System.Globalization.CultureInfo("vi-VN");
 }
 
 <style>
@@ -245,7 +246,7 @@
                             <td>@(!string.IsNullOrWhiteSpace(it.ChuKyNo) ? it.ChuKyNo : "(trống)")</td>
                             <td>@it.TenKhachHang</td>
                             <td>@it.DiaChiKhachHang</td>
-                            <td class="num mono">@Math.Round(it.TongTienPT).ToString("N0")</td>
+                            <td class="num mono">@Math.Round(it.TongTienPT).ToString("N0", moneyCulture)</td>
                             <td class="num mono">@it.SoLuongDong.ToString("N0")</td>
                         </tr>
                     }
