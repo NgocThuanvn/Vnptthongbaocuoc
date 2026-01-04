@@ -217,13 +217,13 @@ WHERE TEN_FILE = @file;
 
                         // Hàng 2: Tiêu đề thông báo
                         h.Item().PaddingTop(8)
-                            .Text($"THÔNG BÁO CƯỚC DỊCH VỤ VIỄN THÔNG {m.ChuKyNo}")
+                            .Text($"THÔNG BÁO CƯỚC DỊCH VỤ VIỄN THÔNG")
                             .SemiBold().FontSize(13).AlignCenter();
 
-                        //// Hàng 3: dòng phụ
-                        //h.Item().Text($"KỲ CƯỚC: {m.ChuKyNo}")
-                        //    .FontSize(9).AlignCenter();
-                        //// Hàng 3: dòng phụ
+                        // Hàng 3: dòng phụ
+                        h.Item().Text($"{m.ChuKyNo}")
+                            .FontSize(9).AlignCenter();
+                        // Hàng 3: dòng phụ
                         h.Item().Text("")
                             .FontSize(9).AlignCenter();
                     });
@@ -243,7 +243,7 @@ WHERE TEN_FILE = @file;
                                 {
                                     cols.ConstantColumn(30);
                                     cols.ConstantColumn(80);
-                                    cols.ConstantColumn(85);
+                                    cols.ConstantColumn(95);
                                     cols.RelativeColumn(6);
                                     cols.ConstantColumn(80);
                                     cols.RelativeColumn(4);
