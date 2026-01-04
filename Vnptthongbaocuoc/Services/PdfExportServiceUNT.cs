@@ -11,6 +11,11 @@ namespace Vnptthongbaocuoc.Services
 {
     public class PdfExportServiceUNT
     {
+        private static readonly NumberFormatInfo CurrencyNumberFormat = new()
+        {
+            NumberGroupSeparator = ".",
+            NumberDecimalSeparator = ","
+        };
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
 
@@ -54,6 +59,11 @@ namespace Vnptthongbaocuoc.Services
             public int SoDong { get; set; }
             public decimal TongPT { get; set; }
             public List<PdfRow> Rows { get; set; } = new();
+        }
+
+        private static string FormatCurrency(decimal value)
+        {
+            return value.ToString("N0", CurrencyNumberFormat);
         }
 
         private async Task<PdfModel> LoadDataAsync(string table, string file)
@@ -267,12 +277,12 @@ WHERE TEN_FILE = @file;
                                     table.Cell().Element(CellCenter).Text(r.MA_TT);
                                     table.Cell().Element(CellCenter).Text(r.ACCOUNT);
                                     table.Cell().Element(CellLeft).Text(string.IsNullOrWhiteSpace(r.DCLAPDAT) ? r.TEN_TT : r.DCLAPDAT);
-                                    table.Cell().Element(CellRight).Text(string.Format("{0:N0}", r.TIEN_PT));
+                                    table.Cell().Element(CellRight).Text(FormatCurrency(r.TIEN_PT));
                                     table.Cell().Element(CellLeft).Text(r.GHI_CHU);
                                 }
 
                                 table.Cell().ColumnSpan(4).Element(CellTotalRight).Text("Tổng cộng:");
-                                table.Cell().Element(CellTotalRight).Text(string.Format("{0:N0}", m.TongPT));
+                                table.Cell().Element(CellTotalRight).Text(FormatCurrency(m.TongPT));
                                 table.Cell().Element(CellTotalRight).Text("");
 
                                 // styles
@@ -330,7 +340,7 @@ WHERE TEN_FILE = @file;
 
                     // footer
                     page.Footer().AlignCenter()
-                        .Text($"© VNPT Thông Báo Cước —Số dòng: {m.SoDong:N0}  ·  Tổng PT: {m.TongPT:N0}");
+                        .Text($"© VNPT Thông Báo Cước —Số dòng: {m.SoDong:N0}  ·  Tổng PT: {FormatCurrency(m.TongPT)}");
                 });
             });
 
