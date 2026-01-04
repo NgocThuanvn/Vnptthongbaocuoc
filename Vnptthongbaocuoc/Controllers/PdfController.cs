@@ -9,11 +9,16 @@ namespace Vnptthongbaocuoc.Controllers
     {
         private readonly PdfExportService _pdfExport;
         private readonly PdfExportServiceUNT _pdfExportUnt;
+        private readonly PdfExportServiceUntNhdt _pdfExportUntNhdt;
 
-        public PdfController(PdfExportService pdfExport, PdfExportServiceUNT pdfExportUnt)
+        public PdfController(
+            PdfExportService pdfExport,
+            PdfExportServiceUNT pdfExportUnt,
+            PdfExportServiceUntNhdt pdfExportUntNhdt)
         {
             _pdfExport = pdfExport;
             _pdfExportUnt = pdfExportUnt;
+            _pdfExportUntNhdt = pdfExportUntNhdt;
         }
 
         // /Pdf/FromFile?table=Vnpt_xxx&file=BANGKE001
@@ -49,6 +54,24 @@ namespace Vnptthongbaocuoc.Controllers
                 return BadRequest("Không có dữ liệu cho TEN_FILE này.");
 
             var downloadName = $"ThongBao_{file}_UNT.pdf";
+            return File(pdfBytes, "application/pdf", downloadName);
+        }
+
+        // /Pdf/FromFileUntNhdt?table=Vnpt_xxx&file=BANGKE001
+        [HttpGet]
+        public async Task<IActionResult> FromFileUntNhdt(string table, string file)
+        {
+            if (string.IsNullOrWhiteSpace(table) || string.IsNullOrWhiteSpace(file))
+                return BadRequest("Thiếu tham số table hoặc file.");
+
+            if (!table.StartsWith("Vnpt_", StringComparison.OrdinalIgnoreCase))
+                return BadRequest("Tên bảng không hợp lệ.");
+
+            var pdfBytes = await _pdfExportUntNhdt.GeneratePdfAsync(table, file);
+            if (pdfBytes == null)
+                return BadRequest("Không có dữ liệu cho TEN_FILE này.");
+
+            var downloadName = $"UNT_NHDT_{file}.pdf";
             return File(pdfBytes, "application/pdf", downloadName);
         }
     }
