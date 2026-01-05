@@ -146,16 +146,19 @@ WHERE TEN_FILE = @file;
 
         private byte[] BuildPdf(PdfModel m)
         {
+            const float ParagraphSpacing = 3f;
+
             var doc = Document.Create(container =>
             {
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(20);
-                    page.DefaultTextStyle(t => t.FontFamily("Times New Roman").FontSize(10));
+                    page.DefaultTextStyle(t => t.FontFamily("Times New Roman").FontSize(10).LineHeight(1));
 
                     page.Content().Column(col =>
                     {
+                        col.Spacing(ParagraphSpacing);
                         col.Item().Row(row =>
                         {
                             row.ConstantItem(120).Border(1).Padding(6).AlignCenter().Text("Không ghi vào\nkhu vực này")
@@ -163,6 +166,7 @@ WHERE TEN_FILE = @file;
 
                             row.RelativeItem().Column(header =>
                             {
+                                header.Spacing(ParagraphSpacing);
                                 header.Item().AlignCenter().Text("ỦY NHIỆM THU").SemiBold().FontSize(13);
                                 header.Item().AlignCenter().Text($"Số: {m.File}").FontSize(9);
                                 var (ngay, thang, nam) = GetDateParts(m.NgayInFile);
@@ -172,6 +176,7 @@ WHERE TEN_FILE = @file;
 
                             row.ConstantItem(150).AlignRight().Column(right =>
                             {
+                                right.Spacing(ParagraphSpacing);
                                 right.Item().AlignRight().Text("Mẫu số C4 - 01/KB").FontSize(9);
                                 right.Item().AlignRight().Text("Số:..................").FontSize(9);
                             });
@@ -181,6 +186,7 @@ WHERE TEN_FILE = @file;
                         {
                             row.RelativeItem().Column(left =>
                             {
+                                left.Spacing(ParagraphSpacing);
                                 left.Item().Text("Đơn vị bán hàng: VNPT CẦN THƠ").SemiBold();
                                 left.Item().Text("Mã DVQHNS:...........................");
                                 left.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SampleAccount) ? "..........................." : m.SampleAccount)}");
@@ -194,6 +200,7 @@ WHERE TEN_FILE = @file;
 
                             row.ConstantItem(165).Border(1).Padding(6).Column(box =>
                             {
+                                box.Spacing(ParagraphSpacing);
                                 box.Item().AlignCenter().Text("PHẦN KBNN GHI").SemiBold();
                                 box.Item().PaddingTop(6).Text("Mã quỹ:......................").FontSize(9);
                                 box.Item().Text("Nợ TK:........................").FontSize(9);
@@ -203,6 +210,7 @@ WHERE TEN_FILE = @file;
 
                         col.Item().PaddingTop(6).Column(info =>
                         {
+                            info.Spacing(ParagraphSpacing);
                             info.Item().Text($"Đơn vị mua hàng: {m.TenKhachHang}");
                             info.Item().Text($"Địa chỉ: {m.DiaChiKhachHang}");
                             info.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SampleAccount) ? "..........................." : m.SampleAccount)}");
@@ -221,6 +229,7 @@ WHERE TEN_FILE = @file;
 
                         col.Item().PaddingTop(8).Column(pay =>
                         {
+                            pay.Spacing(ParagraphSpacing);
                             pay.Item().Text($"Số tiền chuyển:    Bằng số: {FormatCurrency(m.TongPT)}").SemiBold();
                             pay.Item().Text($"Bằng chữ: {DocTienBangChu(m.TongPT)}").FontSize(9);
                             pay.Item().Text("Số ngày chậm trả:.............................").FontSize(9);
@@ -230,6 +239,7 @@ WHERE TEN_FILE = @file;
 
                         col.Item().PaddingTop(8).Column(total =>
                         {
+                            total.Spacing(ParagraphSpacing);
                             total.Item().Text($"Tổng số tiền chuyển:").SemiBold();
                             total.Item().Text($"Bằng số: {FormatCurrency(m.TongPT)}").FontSize(9);
                             total.Item().Text($"Bằng chữ: {DocTienBangChu(m.TongPT)}").FontSize(9);
@@ -258,6 +268,7 @@ WHERE TEN_FILE = @file;
                         {
                             row.RelativeItem().Border(1).Padding(8).Column(left =>
                             {
+                                left.Spacing(ParagraphSpacing);
                                 left.Item().AlignCenter().Text("KHO BẠC NHÀ NƯỚC").SemiBold().FontSize(9);
                                 left.Item().AlignCenter().Text("Nhận chứng từ ngày.......tháng.......năm").FontSize(9);
                                 left.Item().PaddingTop(10).Row(r =>
@@ -269,6 +280,7 @@ WHERE TEN_FILE = @file;
 
                             row.RelativeItem().Border(1).Padding(8).Column(right =>
                             {
+                                right.Spacing(ParagraphSpacing);
                                 right.Item().AlignCenter().Text("NGÂN HÀNG BÊN BÁN").SemiBold().FontSize(9);
                                 right.Item().AlignCenter().Text("Ghi sổ ngày.......tháng.......năm").FontSize(9);
                                 right.Item().PaddingTop(10).Row(r =>
