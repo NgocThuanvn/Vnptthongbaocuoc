@@ -353,7 +353,17 @@ WHERE TEN_FILE = @file;
                                     r.RelativeItem().AlignCenter().Text("Giám đốc").SemiBold();
                                 });
                             });
-                            table.Cell().Row(1).Column(2).RowSpan(2).Border(1).Padding(4).AlignCenter().Text("cell 3");
+                            table.Cell().Row(1).Column(2).RowSpan(2).Border(1).Padding(4).Column(cell =>
+                            {
+                                cell.Spacing(4);
+                                cell.Item().AlignCenter().Text("NGÂN HÀNG BÊN BÁN").SemiBold();
+                                cell.Item().AlignCenter().Text("Ghi sổ ngày.......tháng.......năm..........");
+                                cell.Item().PaddingTop(4).Row(r =>
+                                {
+                                    r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold();
+                                    r.RelativeItem().AlignCenter().Text("Kiểm Soát Viên").SemiBold();
+                                });
+                            });
                         });
                     });
                 });
