@@ -342,7 +342,17 @@ WHERE TEN_FILE = @file;
                                     r.RelativeItem().AlignCenter().Text("Kiểm Soát Viên").SemiBold();
                                 });
                             });
-                            table.Cell().Row(2).Column(1).Border(1).Padding(4).AlignCenter().Text("cell 2");
+                            table.Cell().Row(2).Column(1).Border(1).Padding(4).Column(cell =>
+                            {
+                                cell.Spacing(4);
+                                cell.Item().AlignCenter().Text("Thanh toán ngày.......tháng.......năm");
+                                cell.Item().PaddingTop(4).Row(r =>
+                                {
+                                    r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold();
+                                    r.RelativeItem().AlignCenter().Text("Kiểm Soát Viên").SemiBold();
+                                    r.RelativeItem().AlignCenter().Text("Giám đốc").SemiBold();
+                                });
+                            });
                             table.Cell().Row(1).Column(2).RowSpan(2).Border(1).Padding(4).AlignCenter().Text("cell 3");
                         });
                     });
