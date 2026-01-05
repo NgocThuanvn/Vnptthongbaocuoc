@@ -323,7 +323,18 @@ WHERE TEN_FILE = @file;
 
                         });
 
-                        
+                        col.Item().PaddingTop(10).Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                            });
+
+                            table.Cell().Row(1).Column(1).Border(1).Padding(4).AlignCenter().Text("cell 1");
+                            table.Cell().Row(2).Column(1).Border(1).Padding(4).AlignCenter().Text("cell 2");
+                            table.Cell().Row(1).Column(2).RowSpan(2).Border(1).Padding(4).AlignCenter().Text("cell 3");
+                        });
                     });
                 });
             });
