@@ -216,7 +216,7 @@ WHERE TEN_FILE = @file;
                                 row.RelativeItem().Text("Mã ngành KT:..............");
                                 row.RelativeItem().Text("Mã NDKT:..............");
                                 row.RelativeItem().Text("Mã nguồn NS:..............");
-                            }).FontSize(9);
+                            });
                         });
 
                         col.Item().PaddingTop(8).Column(pay =>
@@ -241,6 +241,11 @@ WHERE TEN_FILE = @file;
                             row.RelativeItem().AlignCenter().Text("Quản lý thu cước").SemiBold().FontSize(9);
                             row.RelativeItem().AlignCenter().Text("Nhân viên kinh tế").SemiBold().FontSize(9);
                             row.RelativeItem().AlignCenter().Text("Thủ trưởng đơn vị").SemiBold().FontSize(9);
+                        }); col.Item().PaddingTop(26).Row(row =>
+                        {
+                            row.RelativeItem().AlignCenter().Text("").FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").FontSize(9);
                         });
                         col.Item().PaddingTop(26).Row(row =>
                         {
@@ -254,7 +259,7 @@ WHERE TEN_FILE = @file;
                             row.RelativeItem().Border(1).Padding(8).Column(left =>
                             {
                                 left.Item().AlignCenter().Text("KHO BẠC NHÀ NƯỚC").SemiBold().FontSize(9);
-                                left.Item().Text("Nhận chứng từ ngày.......tháng.......năm").FontSize(9);
+                                left.Item().AlignCenter().Text("Nhận chứng từ ngày.......tháng.......năm").FontSize(9);
                                 left.Item().PaddingTop(10).Row(r =>
                                 {
                                     r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold().FontSize(9);
@@ -265,11 +270,21 @@ WHERE TEN_FILE = @file;
                             row.RelativeItem().Border(1).Padding(8).Column(right =>
                             {
                                 right.Item().AlignCenter().Text("NGÂN HÀNG BÊN BÁN").SemiBold().FontSize(9);
-                                right.Item().Text("Ghi sổ ngày.......tháng.......năm").FontSize(9);
+                                right.Item().AlignCenter().Text("Ghi sổ ngày.......tháng.......năm").FontSize(9);
                                 right.Item().PaddingTop(10).Row(r =>
                                 {
                                     r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold().FontSize(9);
                                     r.RelativeItem().AlignCenter().Text("Kiểm soát viên").SemiBold().FontSize(9);
+                                }); 
+                                right.Item().PaddingTop(10).Row(r =>
+                                {
+                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                                });
+                                right.Item().PaddingTop(10).Row(r =>
+                                {
+                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
                                 });
                             });
                         });
@@ -280,6 +295,20 @@ WHERE TEN_FILE = @file;
                             row.RelativeItem().AlignCenter().Text("Kế toán").SemiBold().FontSize(9);
                             row.RelativeItem().AlignCenter().Text("Kiểm soát viên").SemiBold().FontSize(9);
                             row.RelativeItem().AlignCenter().Text("Giám đốc").SemiBold().FontSize(9);
+                        });
+                        col.Item().BorderLeft(1).BorderRight(1).BorderBottom(1).Padding(8).Row(row =>
+                        {
+                            row.RelativeItem().Text("").FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                        });
+                        col.Item().BorderLeft(1).BorderRight(1).BorderBottom(1).Padding(8).Row(row =>
+                        {
+                            row.RelativeItem().Text("").FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
                         });
                     });
                 });
