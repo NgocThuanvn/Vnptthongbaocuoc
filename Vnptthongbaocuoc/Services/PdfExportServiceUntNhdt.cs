@@ -211,13 +211,8 @@ WHERE TEN_FILE = @file;
                         col.Item().PaddingTop(6).Column(info =>
                         {
                             info.Spacing(ParagraphSpacing);
-                            info.Item().Text($"Đơn vị mua hàng: {m.TenKhachHang}");
-                            info.Item().Text($"Địa chỉ: {m.DiaChiKhachHang}");
+                            info.Item().Text($"Đơn vị mua hàng: {m.TenKhachHang}; Mã ĐVQHNS: ");
                             info.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SampleAccount) ? "..........................." : m.SampleAccount)}");
-
-                            info.Item().Text("Tại kho bạc Nhà nước, Ngân hàng: NGÂN HÀNG TMCP ĐẦU TƯ VÀ PHÁT TRIỂN VIỆT NAM - CNST")
-                                .FontSize(9);
-
                             info.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Mã chương:..............");
@@ -225,6 +220,11 @@ WHERE TEN_FILE = @file;
                                 row.RelativeItem().Text("Mã NDKT:..............");
                                 row.RelativeItem().Text("Mã nguồn NS:..............");
                             });
+
+                            info.Item().Text("Tại kho bạc Nhà nước, Ngân hàng: NGÂN HÀNG TMCP ĐẦU TƯ VÀ PHÁT TRIỂN VIỆT NAM - CNST")
+                                .FontSize(9);
+
+                         
                         });
 
                         col.Item().PaddingTop(8).Column(pay =>
@@ -264,66 +264,7 @@ WHERE TEN_FILE = @file;
                             row.RelativeItem().AlignCenter().Text("Trần Việt Hưng").FontSize(9);
                         });
 
-                        col.Item().PaddingTop(10).Row(row =>
-                        {
-                            row.RelativeItem().Border(1).Padding(8).Column(left =>
-                            {
-                                left.Spacing(ParagraphSpacing);
-                                left.Item().AlignCenter().Text("KHO BẠC NHÀ NƯỚC").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("Nhận chứng từ ngày.......tháng.......năm").FontSize(9);
-                                left.Item().PaddingTop(10).Row(r =>
-                                {
-                                    r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold().FontSize(9);
-                                    r.RelativeItem().AlignCenter().Text("Kiểm soát viên").SemiBold().FontSize(9);
-                                });
-
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Spacing(ParagraphSpacing);
-                                left.Item().AlignCenter().Text("----------------------").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("Thanh toán ngày.......tháng.......năm").FontSize(9);
-                                left.Item().PaddingTop(10).Row(r =>
-                                {
-                                    r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold().FontSize(9);
-                                    r.RelativeItem().AlignCenter().Text("Kiểm soát viên").SemiBold().FontSize(9);
-                                    r.RelativeItem().AlignCenter().Text("Giám đốc").SemiBold().FontSize(9);
-                                });
-
-                                left.Spacing(ParagraphSpacing);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                                left.Item().AlignCenter().Text("").SemiBold().FontSize(9);
-                            });
-
-                            row.RelativeItem().Border(1).Padding(8).Column(right =>
-                            {
-                                right.Spacing(ParagraphSpacing);
-                                right.Item().AlignCenter().Text("NGÂN HÀNG BÊN BÁN").SemiBold().FontSize(9);
-                                right.Item().AlignCenter().Text("Ghi sổ ngày.......tháng.......năm").FontSize(9);
-                                right.Item().PaddingTop(10).Row(r =>
-                                {
-                                    r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold().FontSize(9);
-                                    r.RelativeItem().AlignCenter().Text("Kiểm soát viên").SemiBold().FontSize(9);
-                                }); 
-                                right.Item().PaddingTop(10).Row(r =>
-                                {
-                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
-                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
-                                });
-                                right.Item().PaddingTop(10).Row(r =>
-                                {
-                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
-                                    r.RelativeItem().AlignCenter().Text("").SemiBold().FontSize(9);
-                                });
-
-                            });
-
-                        });
-
-                        col.Item().PaddingTop(10).Table(table =>
+                      col.Item().PaddingTop(10).Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
                             {
@@ -341,6 +282,12 @@ WHERE TEN_FILE = @file;
                                     r.RelativeItem().AlignCenter().Text("Kế toán").SemiBold();
                                     r.RelativeItem().AlignCenter().Text("Kiểm Soát Viên").SemiBold();
                                 });
+
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
                             });
                             table.Cell().Row(2).Column(1).Border(1).Padding(4).Column(cell =>
                             {
@@ -352,6 +299,13 @@ WHERE TEN_FILE = @file;
                                     r.RelativeItem().AlignCenter().Text("Kiểm Soát Viên").SemiBold();
                                     r.RelativeItem().AlignCenter().Text("Giám đốc").SemiBold();
                                 });
+
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
+                                cell.Item().AlignCenter().Text("");
                             });
                             table.Cell().Row(1).Column(2).RowSpan(2).Border(1).Padding(4).Column(cell =>
                             {
