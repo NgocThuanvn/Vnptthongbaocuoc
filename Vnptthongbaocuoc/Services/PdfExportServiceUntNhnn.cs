@@ -245,6 +245,18 @@ WHERE TEN_FILE = @file;
                             row.RelativeItem().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
                             row.RelativeItem().AlignCenter().Text("TRỊNH MỸ HỘ").SemiBold();
                         });
+
+                        col.Item().PaddingTop(12).Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                            });
+
+                            table.Cell().Border(1).Padding(6).Text("Cell 1");
+                            table.Cell().Border(1).Padding(6).Text("Cell 2");
+                        });
                     });
                 });
             });
