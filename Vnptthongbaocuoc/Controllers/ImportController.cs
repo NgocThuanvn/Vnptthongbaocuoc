@@ -15,7 +15,7 @@ namespace Vnptthongbaocuoc.Controllers
         private static readonly string[] RequiredCols = new[]
         {
             "MA_TT","ACCOUNT","TEN_TT","DIACHI_TT","TIEN_TTHUE","THUE","TIEN_PT",
-            "MA_TRACUUHD","SOHD","NGAY_IN","EMAIL","TEN_FILE","CHUKYNO"
+            "MA_TRACUUHD","SOHD","NGAY_IN","EMAIL","TEN_FILE","CHUKYNO","STK_KH"
         };
 
         public ImportController(IConfiguration config)
@@ -93,6 +93,13 @@ namespace Vnptthongbaocuoc.Controllers
             if (ckErrors.Count > 0)
             {
                 ViewBag.Errors = ckErrors;
+                return View();
+            }
+
+            var stkErrors = ValidateStkKhStrict(rows);
+            if (stkErrors.Count > 0)
+            {
+                ViewBag.Errors = stkErrors;
                 return View();
             }
 
@@ -297,6 +304,45 @@ namespace Vnptthongbaocuoc.Controllers
             return messages;
         }
 
+        private static List<string> ValidateStkKhStrict(List<Dictionary<string, object?>> rows)
+        {
+            var setValues = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            var hasEmpty = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var r in rows)
+            {
+                var tenFile = (r.TryGetValue("TEN_FILE", out var tf) ? tf?.ToString() : "")?.Trim() ?? "";
+                var stk = (r.TryGetValue("STK_KH", out var sk) ? sk?.ToString() : "")?.Trim() ?? "";
+
+                if (!setValues.ContainsKey(tenFile))
+                    setValues[tenFile] = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                if (!hasEmpty.ContainsKey(tenFile))
+                    hasEmpty[tenFile] = false;
+
+                if (string.IsNullOrWhiteSpace(stk))
+                    hasEmpty[tenFile] = true;
+                else
+                    setValues[tenFile].Add(stk);
+            }
+
+            var messages = new List<string>();
+            foreach (var kv in setValues)
+            {
+                var tf = kv.Key;
+                var distinct = kv.Value;
+                var empty = hasEmpty.TryGetValue(tf, out var e) && e;
+
+                if (distinct.Count != 1 || empty)
+                {
+                    if (distinct.Count == 0)
+                        messages.Add($"TEN_FILE='{tf}' không có STK_KH hợp lệ hoặc đang để trống.");
+                    else
+                        messages.Add($"TEN_FILE='{tf}' có nhiều STK_KH: {string.Join(", ", distinct.OrderBy(x => x))}{(empty ? " (và có dòng bị trống)" : "")}.");
+                }
+            }
+            return messages;
+        }
+
         private static async Task<bool> TableExistsAsync(SqlConnection cnn, string table)
         {
             var sql = @"SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME=@t";
@@ -321,7 +367,7 @@ namespace Vnptthongbaocuoc.Controllers
                     "TIEN_TTHUE" or "THUE" or "TIEN_PT" => "DECIMAL(18,0) NULL",
                     "NGAY_IN" => "NVARCHAR(255) NULL",
                     "DIACHI_TT" => "NVARCHAR(500) NULL",
-                    "EMAIL" or "TEN_TT" or "TEN_FILE" or "CHUKYNO" => "NVARCHAR(255) NULL",
+                    "EMAIL" or "TEN_TT" or "TEN_FILE" or "CHUKYNO" or "STK_KH" => "NVARCHAR(255) NULL",
                     _ => "NVARCHAR(255) NULL"
                 };
                 cols.Add($"[{h}] {sqlType}");
