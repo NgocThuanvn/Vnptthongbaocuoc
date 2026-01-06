@@ -206,11 +206,11 @@ WHERE TEN_FILE = @file;
                                 });
                                 left.Item().Text($"Địa chỉ: {(string.IsNullOrWhiteSpace(m.DiaChiKhachHang) ? "" : m.DiaChiKhachHang)}");
                                 left.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SoTaiKhoanKhachHang) ? "0" : m.SoTaiKhoanKhachHang)}");
-                                left.Item().Text("Tại: Ngân Hàng Nhà Nước Chi nhánh Khu Vực 14");
+                                left.Item().Text("Tại: Ngân Hàng Nông Nghiệp & Phát Triển Nông Thôn Việt Nam - Chi nhánh Sóc Trăng");
                                 left.Item().Text("Hợp đồng số (hay đơn đặt hàng:                     Ngày     tháng     năm     )");
-                                left.Item().Text($"Số lượng các loại chứng từ kèm theo: 01 bảng thông báo cước tháng {m.ChuKyNo}");
+                                left.Item().Text($"Số lượng các loại chứng từ kèm theo: 01 bảng thông báo cước tháng: {m.ChuKyNo}");
                                 left.Item().Text($"Số tiền (bằng chữ): {DocTienBangChu(m.TongPT)}");
-                                left.Item().Text($"Số tiền (bằng số): {FormatCurrency(m.TongPT)}");
+                                left.Item().Text($"Số tiền (bằng số): {FormatCurrency(m.TongPT)} đ");
                                 left.Item().Text("Nội dung: Thanh toán cước VT-CNTT");
                             });
 
@@ -219,57 +219,132 @@ WHERE TEN_FILE = @file;
                                 box.Spacing(ParagraphSpacing);
                                 box.Item().AlignCenter().Text("PHẦN DO NH GHI").SemiBold();
                                 box.Item().AlignCenter().Text("TÀI KHOẢN NỢ");
-                                box.Item().Height(90);
+                                box.Item().Height(80);
                                 box.Item().AlignCenter().Text("TÀI KHOẢN CÓ");
-                                box.Item().Height(90);
+                                box.Item().Height(80);
                             });
                         });
 
-                        col.Item().PaddingTop(12).Row(row =>
-                        {
-                            row.RelativeItem().Column(left =>
-                            {
-                                left.Item().AlignCenter().Text("KHÁCH HÀNG NHẬN TIỀN").SemiBold();
-                                left.Item().AlignCenter().Text("GIÁM ĐỐC").SemiBold();
-                                left.Item().AlignCenter().Text("VNPT SÓC TRĂNG").SemiBold();
-                            });
+                    
 
-                            row.RelativeItem().Column(right =>
-                            {
-                                right.Item().AlignCenter().Text("NHÂN VIÊN KINH TẾ").SemiBold();
-                            });
-                        });
-
-                        col.Item().PaddingTop(40).Row(row =>
-                        {
-                            row.RelativeItem().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
-                            row.RelativeItem().AlignCenter().Text("TRỊNH MỸ HỘ").SemiBold();
-                        });
-
-                        col.Item().PaddingTop(12).Table(table =>
+                        col.Item().PaddingTop(6).Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
+                                columns.RelativeColumn(3); // cột trái (chữ ký)
+                                columns.ConstantColumn(100); // cột phải (bạn muốn tăng)
                             });
+                    
 
-                            table.Cell().Border(1).Padding(6).Column(cell =>
+                            table.Cell().Border(0).Padding(12).Column(cell =>
                             {
                                 cell.Item().AlignCenter().Text("KHÁCH HÀNG NHẬN TIỀN").SemiBold();
-                                cell.Item().AlignCenter().Text("GIÁM ĐỐC").SemiBold();
-                                cell.Item().AlignCenter().Text("VNPT SÓC TRĂNG").SemiBold();
-                                cell.Item().Height(30);
-                                cell.Item().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
-                            });
-                            table.Cell().Border(1).Padding(6).Column(cell =>
-                            {
-                                cell.Item().AlignCenter().Text("KHO BẠC NHÀ NƯỚC").SemiBold();
-                                cell.Item().AlignCenter().Text("Nhận chứng từ ngày........tháng........năm........");
                                 cell.Item().PaddingTop(8).Row(row =>
                                 {
-                                    row.RelativeItem().AlignLeft().Text("Kế toán").SemiBold();
-                                    row.RelativeItem().AlignRight().Text("Kiểm Soát Viên").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("GIÁM ĐỐC").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("NV HỖ TRỢ KINH DOANH").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("VNPT SÓC TRĂNG").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("").SemiBold();
+                                });
+                                cell.Item().PaddingTop(1).Row(row =>
+                                {
+                                    row.RelativeItem().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
+                                    row.RelativeItem().AlignCenter().Text("TRỊNH MỸ HỘ").SemiBold();
+                                });
+                            });
+                            table.Cell().Border(0).Padding(6).MaxWidth(5).Column(cell =>
+                            {
+                                cell.Item().AlignCenter().Text(" ").SemiBold();
+                                cell.Item().AlignCenter().Text(" ").SemiBold();
+                                cell.Item().AlignCenter().Text(" ").SemiBold();
+                                cell.Item().Height(30);
+                                cell.Item().AlignCenter().Text(" ").SemiBold();
+                            });
+
+                            col.Item().PaddingTop(10).Table(table =>
+                            {
+                                table.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn();
+                                    columns.RelativeColumn();
+                                });
+
+                                table.Cell().Row(1).Column(1).Border(1).Padding(4).Column(cell =>
+                                {
+                                    cell.Spacing(4);
+                                    cell.Item().AlignCenter().Text("NGÂN HÀNG BÊN NHẬN TIỀN").SemiBold();
+                                    cell.Item().AlignLeft().Text("Nhận chứng từ ngày:........................................................................");
+                                    cell.Item().AlignLeft().Text("Đã kiểm soát và gửi đi ngày:............................................................");
+                                    cell.Item().PaddingTop(4).Row(r =>
+                                    {
+                                        r.RelativeItem().AlignCenter().Text("Giao dịch viên").SemiBold();
+                                        r.RelativeItem().AlignCenter().Text("Kiểm Soát").SemiBold();
+                                    });
+
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                });
+                                table.Cell().Row(2).Column(1).Border(1).Padding(4).Column(cell =>
+                                {
+                                    cell.Spacing(4);
+                                    cell.Item().AlignCenter().Text("NGÂN HÀNG BÊN NHẬN TIỀN").SemiBold();
+                                    cell.Item().AlignCenter().Text("THANH TOÁN ").SemiBold();
+                                    cell.Item().AlignCenter().Text("Ngày.......tháng.......năm.......");
+                                    cell.Item().PaddingTop(4).Row(r =>
+                                    {
+                                        r.RelativeItem().AlignCenter().Text("Giao dịch viên").SemiBold();
+                                        r.RelativeItem().AlignCenter().Text("Kiểm Soát").SemiBold();
+                                    });
+
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                    cell.Item().AlignCenter().Text("");
+                                });
+                                table.Cell().Row(1).Column(2).RowSpan(2).Border(1).Padding(4).Column(cell =>
+                                {
+                                    cell.Spacing(4);
+                                    cell.Item().AlignCenter().Text("NGÂN HÀNG BÊN TRẢ TIỀN").SemiBold();
+                                    cell.Item().AlignLeft().Text("Nhận ngày:.......................................................................................");
+                                    cell.Item().AlignLeft().Text("Thanh toán ngày:..............................................................................");
+                                    cell.Item().PaddingTop(4).Row(r =>
+                                    {
+                                        r.RelativeItem().AlignCenter().Text("Giao dịch viên").SemiBold();
+                                        r.RelativeItem().AlignCenter().Text("Kiểm Soát").SemiBold();
+                                    });
                                 });
                             });
                         });
