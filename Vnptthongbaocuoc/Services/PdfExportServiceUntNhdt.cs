@@ -47,6 +47,7 @@ namespace Vnptthongbaocuoc.Services
             public string File { get; set; } = string.Empty;
             public string TenKhachHang { get; set; } = string.Empty;
             public string DiaChiKhachHang { get; set; } = string.Empty;
+            public string SoTaiKhoanKhachHang { get; set; } = string.Empty;
             public string ChuKyNo { get; set; } = string.Empty;
             public string NgayInFile { get; set; } = string.Empty;
             public int SoDong { get; set; }
@@ -72,7 +73,7 @@ FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file
 ORDER BY TEN_TT, ACCOUNT;
 
-SELECT TOP 1 TEN_TT AS TenKH, DIACHI_TT AS DiaChi, CHUKYNO, Ngayinfile
+SELECT TOP 1 TEN_TT AS TenKH, DIACHI_TT AS DiaChi, CHUKYNO, Ngayinfile, STK_KH
 FROM [dbo].[{table}] WITH (NOLOCK)
 WHERE TEN_FILE = @file;
 
@@ -116,6 +117,7 @@ WHERE TEN_FILE = @file;
                 model.DiaChiKhachHang = rd["DiaChi"]?.ToString() ?? string.Empty;
                 model.ChuKyNo = rd["CHUKYNO"]?.ToString() ?? string.Empty;
                 model.NgayInFile = rd["Ngayinfile"]?.ToString() ?? string.Empty;
+                model.SoTaiKhoanKhachHang = rd["STK_KH"]?.ToString() ?? string.Empty;
             }
 
             if (await rd.NextResultAsync() && await rd.ReadAsync())
@@ -212,7 +214,7 @@ WHERE TEN_FILE = @file;
                         {
                             info.Spacing(ParagraphSpacing);
                             info.Item().Text($"Đơn vị mua hàng: {m.TenKhachHang}; Mã ĐVQHNS: ");
-                            info.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SampleAccount) ? "..........................." : m.SampleAccount)}");
+                            info.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SoTaiKhoanKhachHang) ? "..........................." : m.SoTaiKhoanKhachHang)}");
                             info.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Mã chương:..............");
