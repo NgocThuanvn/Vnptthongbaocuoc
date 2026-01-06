@@ -162,6 +162,12 @@
                 <div id="download-unt-nhdt-files"></div>
             </form>
             <button type="button" class="btn btn-secondary" id="download-selected-unt-nhdt-btn" disabled>Lưu UNT NHĐT đã chọn</button>
+            <form id="downloadSelectedUntNhnnForm" asp-action="DownloadSelectedUntNhnn" asp-controller="Details" method="post" style="display:none;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="table" value="@Model.Table" />
+                <div id="download-unt-nhnn-files"></div>
+            </form>
+            <button type="button" class="btn btn-secondary" id="download-selected-unt-nhnn-btn" disabled>Lưu UNT NHNN đã chọn</button>
             <form id="sendEmailForm" asp-action="SendEmails" asp-controller="Details" method="post" style="display:none;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="table" value="@Model.Table" />
@@ -286,6 +292,11 @@
             downloadUntNhdtBtn.disabled = !anyChecked;
         }
 
+        const downloadUntNhnnBtn = document.getElementById('download-selected-unt-nhnn-btn');
+        if (downloadUntNhnnBtn) {
+            downloadUntNhnnBtn.disabled = !anyChecked;
+        }
+
         const sendEmailBtn = document.getElementById('send-email-btn');
         if (sendEmailBtn) {
             sendEmailBtn.disabled = !anyChecked;
@@ -360,6 +371,30 @@
                 });
 
                 downloadUntNhdtForm.submit();
+            });
+        }
+
+        const downloadUntNhnnBtn = document.getElementById('download-selected-unt-nhnn-btn');
+        const downloadUntNhnnForm = document.getElementById('downloadSelectedUntNhnnForm');
+        const downloadUntNhnnFiles = document.getElementById('download-unt-nhnn-files');
+        if (downloadUntNhnnBtn && downloadUntNhnnForm && downloadUntNhnnFiles) {
+            downloadUntNhnnBtn.addEventListener('click', function () {
+                const checked = document.querySelectorAll('.row-chk:checked');
+                if (checked.length === 0) {
+                    alert('Vui lòng chọn ít nhất một file để lưu.');
+                    return;
+                }
+
+                downloadUntNhnnFiles.innerHTML = '';
+                checked.forEach(function (chk) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'files';
+                    input.value = chk.value;
+                    downloadUntNhnnFiles.appendChild(input);
+                });
+
+                downloadUntNhnnForm.submit();
             });
         }
 
