@@ -170,7 +170,7 @@ WHERE TEN_FILE = @file;
                             {
                                 header.Spacing(ParagraphSpacing);
                                 header.Item().AlignCenter().Text("ỦY NHIỆM THU").SemiBold().FontSize(13);
-                                header.Item().AlignCenter().Text($"Số: {m.File}").FontSize(9);
+                                header.Item().AlignCenter().Text($"Số: {m.SampleAccount}").FontSize(9);
                                 var (ngay, thang, nam) = GetDateParts(m.NgayInFile);
                                 header.Item().AlignCenter().Text($"Lập ngày {ngay} tháng {thang} năm {nam}")
                                     .FontSize(9).FontColor(Colors.Red.Medium);
@@ -191,7 +191,7 @@ WHERE TEN_FILE = @file;
                                 left.Spacing(ParagraphSpacing);
                                 left.Item().Text("Đơn vị bán hàng: VNPT CẦN THƠ").SemiBold();
                                 left.Item().Text("Mã DVQHNS:...........................");
-                                left.Item().Text($"Số tài khoản: {(string.IsNullOrWhiteSpace(m.SampleAccount) ? "..........................." : m.SampleAccount)}");
+                                left.Item().Text($"Số tài khoản: 7420226886");
                                 left.Item().Text("Tại: NGÂN HÀNG TMCP ĐẦU TƯ VÀ PHÁT TRIỂN VIỆT NAM - CNST")
                                     .FontSize(9);
                                 left.Item().Text("Hợp đồng (hay đơn đặt hàng) số:...........................        Ngày kí:..............")
