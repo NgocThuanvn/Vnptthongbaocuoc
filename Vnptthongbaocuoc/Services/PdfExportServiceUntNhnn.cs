@@ -254,7 +254,14 @@ WHERE TEN_FILE = @file;
                                 columns.RelativeColumn();
                             });
 
-                            table.Cell().Border(1).Padding(6).Text("Cell 1");
+                            table.Cell().Border(1).Padding(6).Column(cell =>
+                            {
+                                cell.Item().AlignCenter().Text("KHÁCH HÀNG NHẬN TIỀN").SemiBold();
+                                cell.Item().AlignCenter().Text("GIÁM ĐỐC").SemiBold();
+                                cell.Item().AlignCenter().Text("VNPT SÓC TRĂNG").SemiBold();
+                                cell.Item().Height(30);
+                                cell.Item().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
+                            });
                             table.Cell().Border(1).Padding(6).Text("Cell 2");
                         });
                     });
