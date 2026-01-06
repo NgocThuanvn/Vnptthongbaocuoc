@@ -178,8 +178,9 @@ WHERE TEN_FILE = @file;
 
                             row.ConstantItem(80).AlignRight().Column(right =>
                             {
-                                right.Item().Text("Số:").FontSize(9).AlignRight();
-                                right.Item().Text("Loại tiền tệ:").FontSize(9).AlignRight();
+                                right.Item().Text("").FontSize(9).AlignRight();
+                                right.Item().Text("Số:................").FontSize(9).AlignRight();
+                                right.Item().Text("Loại tiền tệ:...........").FontSize(9).AlignRight();
                             });
                         });
 
@@ -218,9 +219,9 @@ WHERE TEN_FILE = @file;
                                 box.Spacing(ParagraphSpacing);
                                 box.Item().AlignCenter().Text("PHẦN DO NH GHI").SemiBold();
                                 box.Item().AlignCenter().Text("TÀI KHOẢN NỢ");
-                                box.Item().Height(120);
+                                box.Item().Height(90);
                                 box.Item().AlignCenter().Text("TÀI KHOẢN CÓ");
-                                box.Item().Height(120);
+                                box.Item().Height(90);
                             });
                         });
 
@@ -241,8 +242,8 @@ WHERE TEN_FILE = @file;
 
                         col.Item().PaddingTop(40).Row(row =>
                         {
-                            row.RelativeItem().AlignCenter().Text("TRẦN VIỆT HÙNG").SemiBold();
-                            row.RelativeItem().AlignCenter().Text("PHẠM THỊ BÉ NGOAN").SemiBold();
+                            row.RelativeItem().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
+                            row.RelativeItem().AlignCenter().Text("TRỊNH MỸ HỘ").SemiBold();
                         });
                     });
                 });
