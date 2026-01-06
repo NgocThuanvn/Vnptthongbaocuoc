@@ -230,7 +230,7 @@ WHERE TEN_FILE = @file;
                         col.Item().PaddingTop(8).Column(pay =>
                         {
                             pay.Spacing(ParagraphSpacing);
-                            pay.Item().Text($"Số tiền chuyển:    Bằng số: {FormatCurrency(m.TongPT)}").SemiBold();
+                            pay.Item().Text($"Số tiền chuyển:    Bằng số: {FormatCurrency(m.TongPT)} đ").SemiBold();
                             pay.Item().Text($"Bằng chữ: {DocTienBangChu(m.TongPT)}").FontSize(9);
                             pay.Item().Text("Số ngày chậm trả:.............................").FontSize(9);
                             pay.Item().Text("Số tiền phạt chậm trả: Bằng số:......................................................").FontSize(9);
@@ -241,7 +241,7 @@ WHERE TEN_FILE = @file;
                         {
                             total.Spacing(ParagraphSpacing);
                             total.Item().Text($"Tổng số tiền chuyển:").SemiBold();
-                            total.Item().Text($"Bằng số: {FormatCurrency(m.TongPT)}").FontSize(9);
+                            total.Item().Text($"Bằng số: {FormatCurrency(m.TongPT)} đ").FontSize(9);
                             total.Item().Text($"Bằng chữ: {DocTienBangChu(m.TongPT)}").FontSize(9);
                         });
 
@@ -260,8 +260,8 @@ WHERE TEN_FILE = @file;
                         col.Item().PaddingTop(26).Row(row =>
                         {
                             row.RelativeItem().AlignCenter().Text("Trịnh Mỹ Hộ").FontSize(9);
-                            row.RelativeItem().AlignCenter().Text("Phạm Thị Bề Ngoan").FontSize(9);
-                            row.RelativeItem().AlignCenter().Text("Trần Việt Hưng").FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("Trịnh Mỹ Hộ").FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("Trần Phước Huy").FontSize(9);
                         });
 
                       col.Item().PaddingTop(10).Table(table =>
