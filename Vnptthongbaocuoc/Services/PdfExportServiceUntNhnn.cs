@@ -262,7 +262,16 @@ WHERE TEN_FILE = @file;
                                 cell.Item().Height(30);
                                 cell.Item().AlignCenter().Text("TRẦN PHƯỚC HUY").SemiBold();
                             });
-                            table.Cell().Border(1).Padding(6).Text("Cell 2");
+                            table.Cell().Border(1).Padding(6).Column(cell =>
+                            {
+                                cell.Item().AlignCenter().Text("KHO BẠC NHÀ NƯỚC").SemiBold();
+                                cell.Item().AlignCenter().Text("Nhận chứng từ ngày........tháng........năm........");
+                                cell.Item().PaddingTop(8).Row(row =>
+                                {
+                                    row.RelativeItem().AlignLeft().Text("Kế toán").SemiBold();
+                                    row.RelativeItem().AlignRight().Text("Kiểm Soát Viên").SemiBold();
+                                });
+                            });
                         });
                     });
                 });
