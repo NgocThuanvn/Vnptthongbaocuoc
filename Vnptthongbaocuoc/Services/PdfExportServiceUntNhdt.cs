@@ -251,7 +251,7 @@ WHERE TEN_FILE = @file;
                         col.Item().PaddingTop(6).Row(row =>
                         {
                             row.RelativeItem().AlignCenter().Text("Quản lý thu cước").SemiBold().FontSize(9);
-                            row.RelativeItem().AlignCenter().Text("Nhân viên kinh tế").SemiBold().FontSize(9);
+                            row.RelativeItem().AlignCenter().Text("NV hỗ trợ KD").SemiBold().FontSize(9);
                             row.RelativeItem().AlignCenter().Text("Thủ trưởng đơn vị").SemiBold().FontSize(9);
                         }); col.Item().PaddingTop(26).Row(row =>
                         {

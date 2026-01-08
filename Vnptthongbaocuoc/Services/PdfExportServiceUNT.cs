@@ -192,8 +192,8 @@ WHERE TEN_FILE = @file;
                         .PaddingBottom(130)
                         .Column(cc =>
                         {
-                            if (stampImg != null)
-                                cc.Item().AlignLeft().Width(90).Image(stampImg);
+                            //if (stampImg != null)
+                            //    cc.Item().AlignLeft().Width(90).Image(stampImg);
                         });
                     // ========= HEADER: 1 lần duy nhất, gồm Table 4 cột + 2 dòng tiêu đề =========
                     page.Header().Column(h =>
@@ -321,14 +321,14 @@ WHERE TEN_FILE = @file;
                                 c2.Item().Text($"Cần Thơ, ngày {ngay} tháng {thang} năm {nam}")
                                     .AlignCenter();
                                 c2.Item().Text("Người giao").AlignCenter();
-                                if (signImg != null)
-                                {
-                                    c2.Item().AlignCenter().PaddingTop(5).Width(120).Image(signImg).FitWidth();
-                                }
-                                else
-                                {
+                                //if (signImg != null)
+                                //{
+                                //    c2.Item().AlignCenter().PaddingTop(5).Width(120).Image(signImg).FitWidth();
+                                //}
+                                //else
+                                //{
                                     c2.Item().Height(55);
-                                }
+                                //}
 
                                 c2.Item().AlignCenter().Text("Trịnh Mỹ Hộ");
                                 c2.Item().AlignCenter().Text("Số ĐT: 0911814999");
