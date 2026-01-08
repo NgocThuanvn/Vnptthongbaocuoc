@@ -126,6 +126,11 @@
            asp-route-table="@Model.Table" asp-route-file="@Model.File">
             Lưu UNT NHNN
         </a>
+        <a class="btn"
+           asp-controller="Pdf" asp-action="FromFileNnbx"
+           asp-route-table="@Model.Table" asp-route-file="@Model.File">
+            Lưu NNBX
+        </a>
         <form asp-action="SendMail" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" name="table" value="@Model.Table" />
