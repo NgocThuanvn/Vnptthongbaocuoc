@@ -41,6 +41,7 @@ builder.Services.AddScoped<PdfExportService>();
 builder.Services.AddScoped<PdfExportServiceUNT>();
 builder.Services.AddScoped<PdfExportServiceUntNhdt>();
 builder.Services.AddScoped<PdfExportServiceUntNhnn>();
+builder.Services.AddScoped<PdfExportServiceNnbx>();
 builder.Services.AddScoped<ISmtpEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
